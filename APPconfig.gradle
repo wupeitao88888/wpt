@@ -1,0 +1,37 @@
+ext {
+    android = [
+            compileSdkVersion: 27,
+            buildToolsVersion: "27.1.1",
+            minSdkVersion    : 16,
+            targetSdkVersion : 27,
+            versionCode      : 1, //app版本号
+            versionName      : "1.0.0", // app版本名称
+            ZTConfig         : true, //线上线下切换
+            dbVersion        : 1,//数据库版本
+            dbName           : "herunvip.db",//数据库名称
+            baseUrl          : "https://www.zantuvip.com/",//正式服URL
+            token            : "\$2y\$10\$broqirk45wynao8qidm2bu3bbg20xcrqk",//正式服token
+            baseHtmlURl      : "https://www.zantuvip.com/",//正式服的HTML的url
+            baseUrlCESHI     : "https://www.ryit.co/",//测试URL
+            tokenCESHI       : "mlzsdxyxmkveiyabl2ddax43fy0as3czziekpbly",//测试toekn
+            baseHtmlURlCESHI : "https://www.ryit.co/",//测试服的HTML的URL
+            wxAPPID          : "",//微信id
+            wxSecret         : "",//微信Secret
+            qqAPPID          : "",//QQappid
+            qqKey            : "",//QQkey
+            wbKEY            : "",//微博key
+            wbSecret         : "",//微博Secret
+            wbRedirectUrl    : "",//微博回执URL
+            folderdatabase   : "database",//存储数据库的目录
+            folderimg        : "img",//存储图片的目录
+            foldervideo      : "video",//存储视频的目录
+            folderfile       : "file",//存储文件的目录
+            folderdocument   : "document",//存储文档的目录
+            folderapk        : "apk",//存储更新包的目录
+            foldercrash      : "crash",//报错日志的目录
+            aliPayID         : "",//aliAPPid
+            pID              : "",//aliPId
+            rsaPrivate       : "",//私钥
+            jpushAppkey      : "",//极光的APPkey
+    ]
+}

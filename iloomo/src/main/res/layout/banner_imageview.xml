@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.iloomo.widget.MLImageViewR
+    android:id="@+id/imageView"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:radius_btm_left="4dp"
+    app:radius_btm_right="4dp"
+    app:radius_top_left="4dp"
+    app:radius_top_right="4dp">
+
+</com.iloomo.widget.MLImageViewR>
