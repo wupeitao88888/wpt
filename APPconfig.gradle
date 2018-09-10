@@ -15,13 +15,13 @@ ext {
             baseUrlCESHI     : "https://www.ryit.co/",//测试URL
             tokenCESHI       : "mlzsdxyxmkveiyabl2ddax43fy0as3czziekpbly",//测试toekn
             baseHtmlURlCESHI : "https://www.ryit.co/",//测试服的HTML的URL
-            wxAPPID          : "",//微信id
-            wxSecret         : "",//微信Secret
-            qqAPPID          : "",//QQappid
-            qqKey            : "",//QQkey
-            wbKEY            : "",//微博key
-            wbSecret         : "",//微博Secret
-            wbRedirectUrl    : "",//微博回执URL
+            wxAPPID          : "wxbf2e1a5c4c365d95",//微信id
+            wxSecret         : "881675ca686749f15a424cda9c252b1c",//微信Secret
+            qqAPPID          : "1106108264",//QQappid
+            qqKey            : "u33vj2tFtjTTz2GF",//QQkey
+            wbKEY            : "1266962093",//微博key
+            wbSecret         : "563d6552c12e9e03fda17074c972b964",//微博Secret
+            wbRedirectUrl    : "http://www.ryit.co",//微博回执URL
             folderdatabase   : "database",//存储数据库的目录
             folderimg        : "img",//存储图片的目录
             foldervideo      : "video",//存储视频的目录

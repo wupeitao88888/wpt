@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:myapp="http://schemas.android.com/apk/co.baselib"
+    android:id="@+id/ll_title_content"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/bg">
+    <!--android:paddingTop="20dp"-->
+
+    <RelativeLayout
+        android:id="@+id/normal_title"
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:orientation="horizontal">
+
+        <!--顶部搜索栏-->
+        <RelativeLayout
+            android:id="@+id/search_title_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="7.6dp"
+            android:layout_toLeftOf="@+id/lc_right_all"
+            android:focusable="true"
+            android:focusableInTouchMode="true">
+
+            <ImageView
+                android:id="@+id/search"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp" />
+
+            <EditText
+                android:id="@+id/search_bar"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@+id/search"
+                android:background="@color/transparent"
+                android:focusable="false"
+                android:paddingLeft="5dp"
+                android:singleLine="true"
+                android:textCursorDrawable="@null"
+                android:textSize="12sp" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/lc_left_back_all"
+            android:layout_width="80dp"
+            android:layout_height="48dp"
+            android:layout_centerVertical="true"
+            android:layout_weight="1"
+
+            >
+
+            <ImageView
+                android:id="@+id/lc_left_back"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="15dp"
+                android:background="@drawable/pc_back" />
+
+            <ImageView
+                android:id="@+id/lc_left_back_other"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="15dp" />
+        </RelativeLayout>
+
+        <!--顶部title-->
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true">
+
+            <android.support.design.widget.TabLayout
+                android:id="@+id/tl_title_menu"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                myapp:tabIndicatorColor="#3A9BF1"
+                myapp:tabSelectedTextColor="#3A9BF1"
+                myapp:tabTextColor="#474646"></android.support.design.widget.TabLayout>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/lc_center_all"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="70dp"
+                android:layout_marginRight="70dp"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:maxLines="1"
+                android:text="标题"
+                android:textColor="@color/title_text"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/text_below"
+                style="@style/textviewFFB12E_12"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/title"
+                android:layout_marginLeft="70dp"
+                android:layout_marginRight="70dp"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:maxLines="1"
+                android:visibility="gone" />
+
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/lc_right_all"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:gravity="right"
+            android:minWidth="48dp">
+
+            <TextView
+                android:id="@+id/lc_right_second_menu"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="15dp"
+                android:text="下一步"
+                android:textColor="@color/title_text_right"
+                android:textSize="14sp"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/lc_right_menu"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="15dp"
+                android:layout_toRightOf="@+id/lc_right_second_menu"
+                android:text="下一步"
+                android:textColor="@color/title_text_right"
+                android:textSize="14sp"
+                android:visibility="gone" />
+
+            <RelativeLayout
+                android:id="@+id/lc_right_image_re"
+                android:layout_width="40dp"
+                android:layout_height="match_parent"
+                android:visibility="gone">
+
+                <ImageView
+                    android:id="@+id/lc_right_image"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_centerVertical="true"
+                    android:visibility="gone" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/fileName"
+                android:layout_width="40dp"
+                android:layout_height="match_parent"
+                android:visibility="gone">
+
+                <ImageView
+                    android:id="@+id/frist_menu"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_centerVertical="true"
+                    android:visibility="gone" />
+            </RelativeLayout>
+
+            <com.iloomo.widget.badgeview.BGABadgeRelativeLayout
+                android:id="@+id/second_menu_re"
+                android:layout_width="44dp"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="5dp"
+                android:layout_toRightOf="@+id/fileName"
+                android:gravity="center"
+                android:visibility="gone">
+
+
+                <ImageView
+                    android:id="@+id/second_menu"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@+id/frist_menu"
+                    android:visibility="gone" />
+            </com.iloomo.widget.badgeview.BGABadgeRelativeLayout>
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/sreach_re"
+        android:layout_width="match_parent"
+        android:layout_height="32dp"
+        android:orientation="horizontal"
+        android:paddingLeft="20dp"
+        android:visibility="gone"
+        >
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginRight="65dp"
+            android:background="@drawable/sreach_bg">
+
+            <RelativeLayout
+                android:id="@+id/left_menu"
+                android:layout_width="64dp"
+                android:layout_height="match_parent"
+                android:paddingLeft="15dp">
+
+                <TextView
+                    android:id="@+id/left_menu_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:text="帖子"
+                    android:textColor="#333333"
+                    android:textSize="14dp" />
+
+                <ImageView
+                    android:layout_width="7dp"
+                    android:layout_height="4dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="6dp"
+                    android:layout_marginRight="6dp"
+                    android:layout_toRightOf="@+id/left_menu_title"
+                    android:src="@drawable/ss" />
+
+                <View
+                    android:layout_width="0.5dp"
+                    android:layout_height="16dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:background="#333333" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_toRightOf="@+id/left_menu">
+
+                <com.iloomo.widget.ClearEditText
+                    android:id="@+id/search_bar_edit"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_centerVertical="true"
+                    android:layout_toLeftOf="@+id/cancel"
+                    android:background="@color/transparent" />
+
+                <ImageView
+                    android:id="@+id/cancel"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="3dp"
+                    android:layout_marginRight="15dp"
+                    android:visibility="gone"
+                    />
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+
+        <TextView
+            android:id="@+id/quxiao"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="20dp"
+            android:text="取消"
+            android:textColor="#666666" />
+
+
+    </RelativeLayout>
+
+</RelativeLayout>

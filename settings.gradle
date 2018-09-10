@@ -1,1 +1,1 @@
-include ':app',':iloomo', ':compiler', ':ucrop'
+include ':app',':thirdparty', ':baselib'

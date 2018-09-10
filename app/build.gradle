@@ -1,33 +1,82 @@
 apply plugin: 'com.android.application'
-
 apply plugin: 'kotlin-android'
-
 apply plugin: 'kotlin-android-extensions'
 
 android {
-    compileSdkVersion 27
-    defaultConfig {
-        applicationId "co.wpt"
-        minSdkVersion 14
-        targetSdkVersion 27
-        versionCode 1
-        versionName "1.0.0"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    signingConfigs {
+        debug {
+            keyAlias 'ryit'
+            keyPassword 'ryit123456'
+            storeFile file('/Users/wupeitao/Desktop/testworkspase/wpt/app/key/ryit.jks')
+            storePassword 'ryit123456'
+        }
     }
+    compileSdkVersion rootProject.ext.android.compileSdkVersion
+    aaptOptions.cruncherEnabled = false
+    aaptOptions.useNewCruncher = false
+    //recommend
+    dexOptions {
+        jumboMode = true
+    }
+    defaultConfig {
+        applicationId "co.ryit"
+        minSdkVersion rootProject.ext.android.minSdkVersion
+        targetSdkVersion rootProject.ext.android.targetSdkVersion
+        versionCode rootProject.ext.android.versionCode
+        versionName rootProject.ext.android.versionName
+        multiDexEnabled true
+
+
+        ndk {
+            //模拟器用x86
+            abiFilters 'armeabi-v7a', 'armeabi', "x86"
+//            abiFilters 'armeabi-v7a', 'armeabi'
+        }
+    }
+
+    repositories {
+        flatDir {
+            dirs 'libs'
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled false
+            signingConfig signingConfigs.debug
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+    dexOptions {
+        dexInProcess true
+        preDexLibraries true
+        javaMaxHeapSize "4g"//越大越好
+        incremental true
+    }
+    compileOptions {
+        targetCompatibility 1.8
+        sourceCompatibility 1.8
+    }
+    packagingOptions {
+        exclude 'META-INF/rxjava.properties'
+    }
+    buildToolsVersion '27.0.3'
+    lintOptions {
+        checkReleaseBuilds false
+        // Or, if you prefer, you can continue to check for errors in release builds,
+        // but continue the build even when errors are found:
+        abortOnError false
     }
 }
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'com.android.support:appcompat-v7:27.1.1'
     testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'com.android.support.test:runner:1.0.2'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
-    implementation project(':iloomo')
+    api 'com.tbruyelle.rxpermissions:rxpermissions:0.7.0@aar'
+    api 'com.jakewharton.rxbinding:rxbinding:1.0.0'
+    implementation project(':thirdparty')
+    implementation project(':baselib')
 }
+
+
