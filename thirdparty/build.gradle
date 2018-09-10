@@ -45,3 +45,26 @@ dependencies {
     //noinspection GradleCompatible
     api 'com.android.support:design:27.1.1'
 }
+
+
+apply plugin: 'maven'
+
+
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository(url: "http://58.87.124.224:8081/repository/thirdparty/") {
+                authentication(userName: "admin", password: "admin123")
+            }
+            pom.project {
+                name 'thirdparty'
+                version '1.0.0'
+                artifactId 'thirdparty'
+                groupId 'co.wpt'
+                packaging 'aar'
+                description 'thirdparty for Android'
+            }
+        }
+    }
+}
