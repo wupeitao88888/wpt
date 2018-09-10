@@ -19,13 +19,9 @@ import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
-
-
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
-
 import co.baselib.R;
 import co.baselib.banner.listener.OnBannerClickListener;
 import co.baselib.banner.listener.OnBannerListener;
