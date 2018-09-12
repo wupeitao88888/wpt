@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:myapp="http://schemas.android.com/apk/co.baselib"
     android:id="@+id/ll_title_content"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -76,13 +75,6 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true">
 
-            <android.support.design.widget.TabLayout
-                android:id="@+id/tl_title_menu"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                myapp:tabIndicatorColor="#3A9BF1"
-                myapp:tabSelectedTextColor="#3A9BF1"
-                myapp:tabTextColor="#474646"></android.support.design.widget.TabLayout>
         </RelativeLayout>
 
         <RelativeLayout
@@ -182,7 +174,7 @@
                     android:visibility="gone" />
             </RelativeLayout>
 
-            <com.iloomo.widget.badgeview.BGABadgeRelativeLayout
+            <co.baselib.widget.badgeview.BGABadgeRelativeLayout
                 android:id="@+id/second_menu_re"
                 android:layout_width="44dp"
                 android:layout_height="match_parent"
@@ -199,7 +191,7 @@
                     android:layout_centerVertical="true"
                     android:layout_toRightOf="@+id/frist_menu"
                     android:visibility="gone" />
-            </com.iloomo.widget.badgeview.BGABadgeRelativeLayout>
+            </co.baselib.widget.badgeview.BGABadgeRelativeLayout>
         </RelativeLayout>
     </RelativeLayout>
 
@@ -209,8 +201,7 @@
         android:layout_height="32dp"
         android:orientation="horizontal"
         android:paddingLeft="20dp"
-        android:visibility="gone"
-        >
+        android:visibility="gone">
 
 
         <RelativeLayout
@@ -257,7 +248,7 @@
                 android:layout_height="match_parent"
                 android:layout_toRightOf="@+id/left_menu">
 
-                <com.iloomo.widget.ClearEditText
+                <co.baselib.widget.ClearEditText
                     android:id="@+id/search_bar_edit"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -273,8 +264,7 @@
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="3dp"
                     android:layout_marginRight="15dp"
-                    android:visibility="gone"
-                    />
+                    android:visibility="gone" />
             </RelativeLayout>
 
         </RelativeLayout>

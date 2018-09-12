@@ -1,37 +1,40 @@
 ext {
     android = [
-            compileSdkVersion: 27,
-            buildToolsVersion: "27.1.1",
-            minSdkVersion    : 16,
-            targetSdkVersion : 27,
-            versionCode      : 1, //app版本号
-            versionName      : "1.0.0", // app版本名称
-            ZTConfig         : true, //线上线下切换
-            dbVersion        : 1,//数据库版本
-            dbName           : "herunvip.db",//数据库名称
-            baseUrl          : "https://www.zantuvip.com/",//正式服URL
-            token            : "\$2y\$10\$broqirk45wynao8qidm2bu3bbg20xcrqk",//正式服token
-            baseHtmlURl      : "https://www.zantuvip.com/",//正式服的HTML的url
-            baseUrlCESHI     : "https://www.ryit.co/",//测试URL
-            tokenCESHI       : "mlzsdxyxmkveiyabl2ddax43fy0as3czziekpbly",//测试toekn
-            baseHtmlURlCESHI : "https://www.ryit.co/",//测试服的HTML的URL
-            wxAPPID          : "wxbf2e1a5c4c365d95",//微信id
-            wxSecret         : "881675ca686749f15a424cda9c252b1c",//微信Secret
-            qqAPPID          : "1106108264",//QQappid
-            qqKey            : "u33vj2tFtjTTz2GF",//QQkey
-            wbKEY            : "1266962093",//微博key
-            wbSecret         : "563d6552c12e9e03fda17074c972b964",//微博Secret
-            wbRedirectUrl    : "http://www.ryit.co",//微博回执URL
-            folderdatabase   : "database",//存储数据库的目录
-            folderimg        : "img",//存储图片的目录
-            foldervideo      : "video",//存储视频的目录
-            folderfile       : "file",//存储文件的目录
-            folderdocument   : "document",//存储文档的目录
-            folderapk        : "apk",//存储更新包的目录
-            foldercrash      : "crash",//报错日志的目录
-            aliPayID         : "",//aliAPPid
-            pID              : "",//aliPId
-            rsaPrivate       : "",//私钥
-            jpushAppkey      : "",//极光的APPkey
+            compileSdkVersion   : 27,//(必填)
+            buildToolsVersion   : "27.1.1",//(必填)
+            minSdkVersion       : 16,//(必填)
+            targetSdkVersion    : 27,//(必填)
+            versionCode         : 1, //app版本号(必填)
+            versionName         : "1.0.0", // app版本名称(必填)
+            ZTConfig            : true, //线上线下切换(必填)
+            dbVersion           : 1,//数据库版本(必填)
+            dbName              : "herunvip.db",//数据库名称(必填)
+            baseUrl             : "https://www.zantuvip.com/",//正式服URL(必填)
+            token               : "\$2y\$10\$broqirk45wynao8qidm2bu3bbg20xcrqk",//正式服token
+            baseHtmlURl         : "https://www.zantuvip.com/",//正式服的HTML的url(必填)
+            baseUrlCESHI        : "https://www.ryit.co/",//测试URL
+            tokenCESHI          : "mlzsdxyxmkveiyabl2ddax43fy0as3czziekpbly",//测试toekn
+            baseHtmlURlCESHI    : "https://www.ryit.co/",//测试服的HTML的URL(必填)
+            wxAPPID             : "wxbf2e1a5c4c365d95",//微信id
+            wxSecret            : "881675ca686749f15a424cda9c252b1c",//微信Secret
+            qqAPPID             : "1106108264",//QQappid
+            qqKey               : "u33vj2tFtjTTz2GF",//QQkey
+            wbKEY               : "1266962093",//微博key
+            wbSecret            : "563d6552c12e9e03fda17074c972b964",//微博Secret
+            wbRedirectUrl       : "http://www.ryit.co",//微博回执URL
+            folderdatabase      : "database",//存储数据库的目录(必填)
+            folderimg           : "img",//存储图片的目录(必填)
+            foldervideo         : "video",//存储视频的目录(必填)
+            folderfile          : "file",//存储文件的目录(必填)
+            folderdocument      : "document",//存储文档的目录(必填)
+            folderapk           : "apk",//存储更新包的目录(必填)
+            foldercrash         : "crash",//报错日志的目录(必填)
+            aliPayID            : "",//aliAPPid
+            pID                 : "",//aliPId
+            rsaPrivate          : "",//私钥
+            jpushAppkey         : "",//极光的APPkey
+            test_certificate    : "",//测试服的http证书
+            zhengshi_certificate: "",//正式服的http证书
+            is_certificate      : false //是否使用HTTP证书(必填)
     ]
 }

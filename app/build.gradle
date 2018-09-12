@@ -26,7 +26,6 @@ android {
         versionName rootProject.ext.android.versionName
         multiDexEnabled true
 
-
         ndk {
             //模拟器用x86
             abiFilters 'armeabi-v7a', 'armeabi', "x86"

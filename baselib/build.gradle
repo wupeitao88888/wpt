@@ -37,7 +37,9 @@ android {
         buildConfigField "String", "rsaPrivate", "\"${rootProject.ext.android.rsaPrivate}\""
         buildConfigField "String", "foldercrash", "\"${rootProject.ext.android.foldercrash}\""
         buildConfigField "String", "jpushAppkey", "\"${rootProject.ext.android.jpushAppkey}\""
-
+        buildConfigField "String","test_certificate","\"${rootProject.ext.android.test_certificate}\""
+        buildConfigField "String","zhengshi_certificate","\"${rootProject.ext.android.zhengshi_certificate}\""
+        buildConfigField "boolean","is_certificate","${rootProject.ext.android.is_certificate}"
 
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -76,8 +78,8 @@ dependencies {
     //请参照文档编写https://github.com/H07000223/FlycoTabLayout/blob/master/README_CN.md
     api 'com.flyco.tablayout:FlycoTabLayout_Lib:2.1.2@aar'
     api files('libs/nineoldandroids-2.4.0.jar')
-    implementation files('libs/ormlite-android-5.0.jar')
-    implementation files('libs/ormlite-core-5.0.jar')
+    api files('libs/ormlite-android-5.0.jar')
+    api files('libs/ormlite-core-5.0.jar')
 }
 
 apply plugin: 'maven'
@@ -92,7 +94,7 @@ uploadArchives {
             }
             pom.project {
                 name 'baselib'
-                version '1.0.2'
+                version '1.0.7'
                 artifactId 'baselib'
                 groupId 'co.baselib'
                 packaging 'aar'

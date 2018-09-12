@@ -7,6 +7,7 @@ import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -78,7 +79,7 @@ public class TitleBar extends FrameLayout {
 
     private void init(final Context context) {
         this.mContext = context;
-        View inflate = View.inflate(context, R.layout.plc_layout_title, null);
+        View inflate = LayoutInflater.from(context).inflate(R.layout.plc_layout_title, null);
         ll_title_content = (RelativeLayout) inflate.findViewById(R.id.ll_title_content);
         lc_center_menu = (TextView) inflate.findViewById(R.id.title);
         lc_left_back = (ImageView) inflate.findViewById(R.id.lc_left_back);
