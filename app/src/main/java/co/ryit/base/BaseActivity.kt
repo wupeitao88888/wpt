@@ -15,6 +15,11 @@ open class BaseActivity : ActivitySupport() {
 
     override fun onSucceedBase(what: Int, response: Response<*>?, request: String?, modelClass: Class<*>?) {
         super.onSucceedBase(what, response, request, modelClass)
+
+        if (modelClass == String::class.java) {
+            L.e("网络请求：" + request)
+            return;
+        }
         try {
             val bmodel = gson.fromJson(request, BaseModel::class.java)
             setTimeSync(bmodel!!.timestamp)//存储当前时间和服务器时间对比时间差
@@ -106,6 +111,5 @@ open class BaseActivity : ActivitySupport() {
         showToastBig(baseModel.errorMessage)
         onFailedV2(what, baseModel)
     }
-
 
 }

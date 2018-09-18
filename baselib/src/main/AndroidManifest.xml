@@ -2,4 +2,7 @@
     package="co.baselib" >
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <application>
+        <activity android:name=".base.ActivitySupport" />
+    </application>
 </manifest>

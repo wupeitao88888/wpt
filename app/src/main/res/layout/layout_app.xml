@@ -3,19 +3,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@color/white"
     >
 
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="45dp"
-        android:text="登陆"
-        android:onClick="onlogin"
-        />
+    <co.baselib.widget.StartPic
+        android:id="@+id/welcome"
+       android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="45dp"
-        android:text="删除授权"
-        android:onClick="onDeleteLogin"
-        />
 </LinearLayout>

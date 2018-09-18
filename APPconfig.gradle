@@ -6,7 +6,7 @@ ext {
             targetSdkVersion    : 27,//(必填)
             versionCode         : 1, //app版本号(必填)
             versionName         : "1.0.0", // app版本名称(必填)
-            ZTConfig            : true, //线上线下切换(必填)
+            ZTConfig            : false, //线上线下切换(必填)
             dbVersion           : 1,//数据库版本(必填)
             dbName              : "herunvip.db",//数据库名称(必填)
             baseUrl             : "https://www.zantuvip.com/",//正式服URL(必填)

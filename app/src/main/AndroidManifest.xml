@@ -116,8 +116,10 @@
             android:noHistory="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
+
                 <data android:scheme="tencent1106108264" />
             </intent-filter>
         </activity>
@@ -156,6 +158,21 @@
 
         </activity>
         <!--新浪 end-->
+
+        <activity
+            android:name="co.ryit.activity.IndexActivity"
+            android:configChanges="orientation|keyboardHidden|navigation"
+            android:exported="false"
+            android:screenOrientation="behind"></activity>
+
+
+        <!--下载demo-->
+        <activity
+            android:name="co.ryit.activity.download.DownloadActivity"
+            android:configChanges="orientation|keyboardHidden|navigation"
+            android:exported="false"
+            android:screenOrientation="behind"></activity>
+
 
     </application>
 </manifest>

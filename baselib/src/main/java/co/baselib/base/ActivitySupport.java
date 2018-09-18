@@ -35,7 +35,11 @@ import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.AnimatorSet;
 import com.nineoldandroids.animation.ObjectAnimator;
 import com.umeng.analytics.MobclickAgent;
+import com.yanzhenjie.nohttp.Headers;
 import com.yanzhenjie.nohttp.NoHttp;
+import com.yanzhenjie.nohttp.RequestMethod;
+import com.yanzhenjie.nohttp.download.DownloadQueue;
+import com.yanzhenjie.nohttp.download.DownloadRequest;
 import com.yanzhenjie.nohttp.rest.Request;
 import com.yanzhenjie.nohttp.rest.RequestQueue;
 import com.yanzhenjie.nohttp.rest.Response;
@@ -45,9 +49,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 ;import co.baselib.R;
+import co.baselib.bean.DownLoad;
 import co.baselib.global.AppController;
 import co.baselib.global.IloomoConfig;
 import co.baselib.model.OnAdapterToastListener;
+import co.baselib.nohttp.DownloadCallback;
 import co.baselib.nohttp.HttpV2ResponseListener;
 import co.baselib.statusbar.Eyes;
 import co.baselib.threadpool.MyThreadPool;
@@ -99,8 +105,8 @@ public class ActivitySupport extends AppCompatActivity implements
         return super.onKeyDown(keyCode, event);
     }
 
-    public boolean isIndex = true;
     public boolean islogin = false;
+    private DownloadQueue mDownloadQueue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,7 +115,8 @@ public class ActivitySupport extends AppCompatActivity implements
         L.e("android版本号：" + Build.VERSION.SDK_INT);
         super.onCreate(savedInstanceState);
         // 初始化请求队列，传入的参数是请求并发值。
-        mQueue = NoHttp.newRequestQueue();
+        mQueue = NoHttp.newRequestQueue(); //网络请求
+        mDownloadQueue = NoHttp.newDownloadQueue();//下载请求
         initDate();
         onAdapterToastListener = new OnAdapterToastListener() {
             @Override
@@ -130,15 +137,32 @@ public class ActivitySupport extends AppCompatActivity implements
 
 
     public void setStatusBar() {
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
-            Eyes.translucentStatusBar(this, true);
-            Eyes.setStatusBarLightMode(this, Color.TRANSPARENT);
+        if (ishide) {
+            //得到当前界面的装饰视图
+//            View decorView = getWindow().getDecorView();
+//            //设置系统UI元素的可见性
+//            decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN);
         } else {
-            Window window = getWindow();
-            // 沉浸通知栏
-            window.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS,
-                    WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
+                Eyes.translucentStatusBar(this, true);
+                Eyes.setStatusBarLightMode(this, Color.TRANSPARENT);
+            } else {
+                Window window = getWindow();
+                // 沉浸通知栏
+                window.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS,
+                        WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            }
         }
+
+    }
+
+    private boolean ishide = false;
+
+    /**
+     * 是否隐藏状态栏
+     */
+    public void isHideStatusBar(boolean ishide) {
+        this.ishide = ishide;
     }
 
 
@@ -651,7 +675,8 @@ public class ActivitySupport extends AppCompatActivity implements
      * @param
      */
     protected void setRemoveTitle() {
-        titleBar.setVisibility(View.GONE);
+//        titleBar.setVisibility(View.GONE);
+        all_super.removeView(titleBar);
     }
 
     protected void setTitle() {
@@ -804,9 +829,17 @@ public class ActivitySupport extends AppCompatActivity implements
     @Override
     protected void onDestroy() {
         // 和声明周期绑定，退出时取消这个队列中的所有请求，当然可以在你想取消的时候取消也可以，不一定和声明周期绑定。
-        mQueue.cancelBySign(object);
+        try {
+            mQueue.cancelBySign(object);
+            for (int i = 0; i < filesList.size(); i++) {
+                DownLoad downLoad = filesList.get(i);
+                downLoad.getmRequest().cancelBySign(i);
+            }
+        } catch (Exception e) {
+        }
         // 因为回调函数持有了activity，所以退出activity时请停止队列。
         mQueue.stop();
+        mDownloadQueue.stop();
         super.onDestroy();
         //可以取消同一个tag的网络请求
         //Acitvity 释放子view资源
@@ -1026,6 +1059,7 @@ public class ActivitySupport extends AppCompatActivity implements
     }
 
 
+
     /****
      * 内部类  网络回调
      * @param <T>
@@ -1101,5 +1135,49 @@ public class ActivitySupport extends AppCompatActivity implements
 
     }
 
+
+    List<DownLoad> filesList = new ArrayList<>();
+
+    int queueCount = 0;
+
+    /**
+     * 下载----第一启动下载时调用，用downLoadStop调用停止下载，重新启动调用downLoadRestart
+     *
+     * @param what
+     * @param url
+     * @param path
+     * @param filename
+     * @param downloadCallback
+     */
+    public int downLoad(int what, String url, String path, String filename, DownloadCallback downloadCallback) {
+        DownloadRequest mRequest = new DownloadRequest(url, RequestMethod.GET, path, filename, true, true);
+        mRequest.setCancelSign(queueCount);
+        mDownloadQueue.add(what, mRequest, downloadCallback);
+        DownLoad downLoad = new DownLoad();
+        downLoad.setDwhat(what);
+        downLoad.setDdownloadCallback(downloadCallback);
+        downLoad.setmRequest(mRequest);
+        filesList.add(downLoad);
+        queueCount++;
+        return queueCount - 1;
+    }
+
+
+    /***
+     * 重新开始
+     */
+    public void downLoadRestart(int mqueueCount) {
+        DownLoad downLoad = filesList.get(mqueueCount);
+        mDownloadQueue.add(downLoad.getDwhat(), downLoad.getmRequest(), downLoad.getDdownloadCallback());
+    }
+
+    /***
+     * 停止下载
+     */
+    public void downLoadStop(int mqueueCount) {
+        DownLoad downLoad = filesList.get(mqueueCount);
+        if (downLoad.getmRequest() != null)
+            downLoad.getmRequest().cancel();
+    }
 
 }

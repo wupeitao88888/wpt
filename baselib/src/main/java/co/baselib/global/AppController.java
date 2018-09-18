@@ -82,7 +82,7 @@ public class AppController {
      */
     private void netInit() {
         com.yanzhenjie.nohttp.Logger.setDebug(AppConfig.ISZENGSHI);// 开启NoHttp的调试模式, 配置后可看到请求过程、日志和错误信息。
-        com.yanzhenjie.nohttp.Logger.setTag("NoHttpSample");// 设置NoHttp打印Log的tag。
+        com.yanzhenjie.nohttp.Logger.setTag("NoHttp：");// 设置NoHttp打印Log的tag。
         InitializationConfig config;
         if (BuildConfig.is_certificate) {
             SSLContext sslContext = SSLContextUtil.getSSLContext();

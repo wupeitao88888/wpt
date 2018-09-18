@@ -262,6 +262,27 @@ public class PFileUtils {
         return path;
     }
 
+
+    public static String getAppPathAPK() {
+        File sdDir = null;
+        boolean sdCardExist = Environment.getExternalStorageState()
+                .equals(Environment.MEDIA_MOUNTED);//判断sd卡是否存在
+        if (sdCardExist) {
+            sdDir = Environment.getExternalStorageDirectory();//获取跟目录
+        } else {
+            return AppController.getInstance().getCacheDirPath();
+        }
+        String replace = AppController.getInstance().getContext().getPackageName();
+        String path = sdDir.toString() + "/Android/data/" + replace + "/" + BuildConfig.folderapk + "/";
+        File dbFolder = new File(path);
+        // 目录不存在则自动创建目录
+        if (!dbFolder.exists()) {
+            dbFolder.mkdirs();
+        }
+        return path;
+    }
+
+
     public static String getSDPathVideo() {
         File sdDir = null;
         boolean sdCardExist = Environment.getExternalStorageState()

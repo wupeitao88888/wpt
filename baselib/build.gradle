@@ -1,4 +1,5 @@
 apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
 
 android {
     compileSdkVersion 27
@@ -66,7 +67,7 @@ dependencies {
     api 'com.google.code.gson:gson:2.8.5'
     api files('libs/umeng-analytics-7.5.3.jar')
     api 'com.android.support:design:27.1.1'
-    api 'com.yanzhenjie.nohttp:okhttp:1.1.10'
+    api 'com.yanzhenjie.nohttp:okhttp:1.1.11'
     api 'com.orhanobut:logger:2.1.1'
     api 'com.zhy:base-rvadapter:3.0.3'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.7.1'
@@ -80,6 +81,9 @@ dependencies {
     api files('libs/nineoldandroids-2.4.0.jar')
     api files('libs/ormlite-android-5.0.jar')
     api files('libs/ormlite-core-5.0.jar')
+    api 'com.tbruyelle.rxpermissions:rxpermissions:0.7.0@aar'
+    api 'com.jakewharton.rxbinding:rxbinding:1.0.0'
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
 
 apply plugin: 'maven'
@@ -94,13 +98,16 @@ uploadArchives {
             }
             pom.project {
                 name 'baselib'
-                version '1.0.7'
+                version '1.0.8'
                 artifactId 'baselib'
                 groupId 'co.baselib'
                 packaging 'aar'
-                description 'baselib for Android'
+                description 'baselib 添加权限申请'
             }
         }
     }
+}
+repositories {
+    mavenCentral()
 }
 
