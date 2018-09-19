@@ -65,7 +65,7 @@ public class CrashHandler implements UncaughtExceptionHandler {
             return "";
         }
         String replace = AppController.getInstance().getContext().getPackageName();
-        String path = sdDir.toString() + "/Android/data/" + replace + "/"+ BuildConfig.foldercrash+"/";
+        String path = sdDir.toString() + "/Android/data/" + replace + "/" + BuildConfig.foldercrash + "/";
         File dbFolder = new File(path);
         // 目录不存在则自动创建目录
         if (!dbFolder.exists()) {
@@ -140,7 +140,7 @@ public class CrashHandler implements UncaughtExceptionHandler {
                 LCSharedPreferencesHelper.SHARED_PATH);
         int crash = sharedPreferencesHelper.getIntValue("CRASH");
         L.e("报错次数：" + crash);
-        int crash_count = crash+1;
+        int crash_count = crash + 1;
         sharedPreferencesHelper.putInt("CRASH", crash_count);
         L.e("报错次数——：" + crash_count);
         if (crash < 3) {

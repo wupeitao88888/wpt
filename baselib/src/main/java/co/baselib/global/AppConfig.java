@@ -12,5 +12,8 @@ public class AppConfig {
     /***
      * 正式测试服务器切换
      */
-    public static boolean ISZENGSHI = BuildConfig.ztConfig;
+    public static boolean ISZENGSHI = false;
+    public static boolean is_certificate = false;
+    public static int DBVERSION = 1;
+    public static String dbName = "baseLib.db";
 }

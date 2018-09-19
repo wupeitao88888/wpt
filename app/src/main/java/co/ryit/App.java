@@ -6,6 +6,7 @@ import android.app.Application;
 import com.umeng.commonsdk.UMConfigure;
 import com.umeng.socialize.PlatformConfig;
 
+
 import co.baselib.global.AppController;
 import co.wpt.utils.UmengUtils;
 
@@ -20,9 +21,9 @@ public class App extends Application {
     }
 
     {
-        PlatformConfig.setWeixin(co.baselib.BuildConfig.wxAPPID, co.baselib.BuildConfig.wxSecret);
-        PlatformConfig.setQQZone(co.baselib.BuildConfig.qqAPPID, co.baselib.BuildConfig.qqKey);
-        PlatformConfig.setSinaWeibo(co.baselib.BuildConfig.wbKEY, co.baselib.BuildConfig.wbSecret, co.baselib.BuildConfig.wbRedirectUrl);
+        PlatformConfig.setWeixin(BuildConfig.wxAPPID, BuildConfig.wxSecret);
+        PlatformConfig.setQQZone(BuildConfig.qqAPPID, BuildConfig.qqKey);
+        PlatformConfig.setSinaWeibo(BuildConfig.wbKEY, BuildConfig.wbSecret, BuildConfig.wbRedirectUrl);
     }
 
 

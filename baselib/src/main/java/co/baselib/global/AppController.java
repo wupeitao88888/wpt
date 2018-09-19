@@ -62,6 +62,38 @@ public class AppController {
         return mApplication.getResources().getText(R.string.error_not_found_server).toString();
     }
 
+    /***
+     * 数据库版本
+     * @param dbversion
+     */
+    public void setDBVersion(int dbversion) {
+        AppConfig.DBVERSION = dbversion;
+    }
+
+    /***
+     * 数据库名称
+     * @param dbName
+     */
+    public void setDBName(String dbName) {
+        AppConfig.dbName = dbName;
+    }
+
+    /***
+     * 谁否使用证书
+     * @param isCertificate
+     */
+    public void setIsCertificate(boolean isCertificate) {
+        AppConfig.is_certificate = isCertificate;
+    }
+
+    /***
+     * 正式服切换
+     * @param ISZENGSHI
+     */
+    public void setISZENGSHI(boolean ISZENGSHI) {
+        AppConfig.is_certificate = ISZENGSHI;
+    }
+
 
     /***
      * 程序初始化
@@ -84,7 +116,7 @@ public class AppController {
         com.yanzhenjie.nohttp.Logger.setDebug(AppConfig.ISZENGSHI);// 开启NoHttp的调试模式, 配置后可看到请求过程、日志和错误信息。
         com.yanzhenjie.nohttp.Logger.setTag("NoHttp：");// 设置NoHttp打印Log的tag。
         InitializationConfig config;
-        if (BuildConfig.is_certificate) {
+        if (AppConfig.is_certificate) {
             SSLContext sslContext = SSLContextUtil.getSSLContext();
             config = InitializationConfig.newBuilder(context)
                     // 全局连接服务器超时时间，单位毫秒，默认10s。
