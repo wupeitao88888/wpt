@@ -3,11 +3,19 @@ package co.baselib.utils;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.ColorStateList;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Matrix;
+import android.graphics.PixelFormat;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.StateListDrawable;
 
 /**
+ * 关于drawable的工具
+ *
  * Created by wupeitao on 2018/1/7.
  */
 
@@ -26,21 +34,10 @@ public class DrawableUtil {
         gradientDrawable.setColor(rgb);
         gradientDrawable.setGradientType(GradientDrawable.RECTANGLE);
         gradientDrawable.setCornerRadius(corneradius);
-        gradientDrawable.setStroke(AppUtil.dip2px(context,0), rgb);
+        gradientDrawable.setStroke(AppUtil.dip2px(context, 0), rgb);
         return gradientDrawable;
     }
 
-
-
-//     <!-- Non focused states -->
-//    <item android:drawable="@mipmap/shouye" android:state_focused="false" android:state_pressed="false" android:state_selected="false"/>
-//    <item android:drawable="@mipmap/shouye_select" android:state_focused="false" android:state_pressed="false" android:state_selected="true"/>
-//    <!-- Focused states -->
-//    <item android:drawable="@mipmap/shouye_select" android:state_focused="true" android:state_pressed="false" android:state_selected="false"/>
-//    <item android:drawable="@mipmap/shouye_select" android:state_focused="true" android:state_pressed="false" android:state_selected="true"/>
-//    <!-- Pressed -->
-//    <item android:drawable="@mipmap/shouye_select" android:state_pressed="true" android:state_selected="true"/>
-//    <item android:drawable="@mipmap/shouye_select" android:state_pressed="true"/>
 
     /***
      * 设置选择器 选中的时候
@@ -67,20 +64,20 @@ public class DrawableUtil {
      * @return
      */
     public static ColorStateList createColorStateList(int normal, int pressed, int focused, int unable) {
-        int[] colors = new int[] { pressed, focused, normal, focused, unable, normal };
+        int[] colors = new int[]{pressed, focused, normal, focused, unable, normal};
         int[][] states = new int[6][];
-        states[0] = new int[] { android.R.attr.state_pressed, android.R.attr.state_enabled };
-        states[1] = new int[] { android.R.attr.state_enabled, android.R.attr.state_focused };
-        states[2] = new int[] { android.R.attr.state_enabled };
-        states[3] = new int[] { android.R.attr.state_focused };
-        states[4] = new int[] { android.R.attr.state_window_focused };
-        states[5] = new int[] {};
+        states[0] = new int[]{android.R.attr.state_pressed, android.R.attr.state_enabled};
+        states[1] = new int[]{android.R.attr.state_enabled, android.R.attr.state_focused};
+        states[2] = new int[]{android.R.attr.state_enabled};
+        states[3] = new int[]{android.R.attr.state_focused};
+        states[4] = new int[]{android.R.attr.state_window_focused};
+        states[5] = new int[]{};
         ColorStateList colorList = new ColorStateList(states, colors);
         return colorList;
     }
 
     public static ColorStateList createColorStateList(int normal, int pressed) {
-        int[] colors = new int[]{ pressed,normal};
+        int[] colors = new int[]{pressed, normal};
         int[][] states = new int[2][];
         states[0] = new int[]{android.R.attr.state_selected};
         states[1] = new int[]{-android.R.attr.state_selected};
@@ -90,6 +87,44 @@ public class DrawableUtil {
     }
 
 
+    /****
+     *
+     * 设置Drawable 资源文件的宽高
+     *
+     * @param drawable 待设置的资源文件
+     * @param h  图片的高
+     * @param w   图片的宽
+     * @return
+     */
+    private Drawable zoomDrawable(Drawable drawable, int w, int h) {
+        int width = drawable.getIntrinsicWidth();
+        int height = drawable.getIntrinsicHeight();
+        Bitmap oldbmp = drawableToBitmap(drawable);
+        Matrix matrix = new Matrix();
+        float scaleWidth = ((float) w / width);
+        float scaleHeight = ((float) h / height);
+        matrix.postScale(scaleWidth, scaleHeight);
+        Bitmap newbmp = Bitmap.createBitmap(oldbmp, 0, 0, width, height,
+                matrix, true);
+        return new BitmapDrawable(null, newbmp);
+    }
+
+    /****
+     * 将图片由drawable转成Bitmap
+     * @param drawable
+     * @return
+     */
+    private Bitmap drawableToBitmap(Drawable drawable) {
+        int width = drawable.getIntrinsicWidth();
+        int height = drawable.getIntrinsicHeight();
+        Bitmap.Config config = drawable.getOpacity() != PixelFormat.OPAQUE ? Bitmap.Config.ARGB_8888
+                : Bitmap.Config.RGB_565;
+        Bitmap bitmap = Bitmap.createBitmap(width, height, config);
+        Canvas canvas = new Canvas(bitmap);
+        drawable.setBounds(0, 0, width, height);
+        drawable.draw(canvas);
+        return bitmap;
+    }
 
 
 }

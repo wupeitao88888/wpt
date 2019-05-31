@@ -2,12 +2,12 @@ package co.baselib.db.helper;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import android.text.TextUtils;
 
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.support.ConnectionSource;
 
-import co.baselib.BuildConfig;
-import co.baselib.global.AppConfig;
+import co.baselib.global.IloomoConfig;
 import co.baselib.utils.PFileUtils;
 
 
@@ -16,14 +16,9 @@ import co.baselib.utils.PFileUtils;
  */
 public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
-    public static final String DB_NAME = PFileUtils.getSDPath() + AppConfig.dbName;
-    //数据库名
-    public static final int DB_VERSION = AppConfig.DBVERSION;
-    //数据库版本
-
     //Helper单例
     public DatabaseHelper(Context context) {
-        super(context, DB_NAME, null, DB_VERSION);
+        super(context, (PFileUtils.getSDPath()+IloomoConfig.init(context).getDbName()), null, IloomoConfig.init(context).getDbVersion());
     }
 
     @Override

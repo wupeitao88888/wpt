@@ -6,11 +6,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.graphics.Color;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -24,7 +22,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -35,35 +32,31 @@ import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.AnimatorSet;
 import com.nineoldandroids.animation.ObjectAnimator;
 import com.umeng.analytics.MobclickAgent;
-import com.yanzhenjie.nohttp.Headers;
-import com.yanzhenjie.nohttp.NoHttp;
-import com.yanzhenjie.nohttp.RequestMethod;
-import com.yanzhenjie.nohttp.download.DownloadQueue;
-import com.yanzhenjie.nohttp.download.DownloadRequest;
-import com.yanzhenjie.nohttp.rest.Request;
-import com.yanzhenjie.nohttp.rest.RequestQueue;
-import com.yanzhenjie.nohttp.rest.Response;
-
+import com.yanzhenjie.kalle.Kalle;
+import com.yanzhenjie.kalle.simple.RequestManager;
+import com.yanzhenjie.kalle.simple.SimpleBodyRequest;
+import com.yanzhenjie.kalle.simple.SimpleCallback;
+import com.yanzhenjie.kalle.simple.SimpleResponse;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
-;import co.baselib.R;
-import co.baselib.bean.DownLoad;
+import co.baselib.R;
 import co.baselib.global.AppController;
 import co.baselib.global.IloomoConfig;
 import co.baselib.model.OnAdapterToastListener;
-import co.baselib.nohttp.DownloadCallback;
-import co.baselib.nohttp.HttpV2ResponseListener;
-import co.baselib.statusbar.Eyes;
 import co.baselib.threadpool.MyThreadPool;
 import co.baselib.update.utils.HotUpdateUtils;
 import co.baselib.utils.ActivityErrorUtils;
 import co.baselib.utils.ActivityPageManager;
 import co.baselib.utils.DateUtil;
+import co.baselib.utils.DialogUtil;
 import co.baselib.utils.L;
 import co.baselib.utils.LCSharedPreferencesHelper;
 import co.baselib.utils.PImageLoaderUtils;
+import co.baselib.utils.StatusBarUtil;
 import co.baselib.utils.StrUtil;
 import co.baselib.utils.ToastUtil;
 import co.baselib.utils.UnicodeUtils;
@@ -89,12 +82,8 @@ public class ActivitySupport extends AppCompatActivity implements
     /**
      * 用来标记取消。
      */
-    private Object object = new Object();
+    public Object cancelTag = new Object();
 
-    /**
-     * 请求队列。
-     */
-    private RequestQueue mQueue;
     public Gson gson;
 
     @Override
@@ -106,17 +95,12 @@ public class ActivitySupport extends AppCompatActivity implements
     }
 
     public boolean islogin = false;
-    private DownloadQueue mDownloadQueue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         ActivityPageManager.getInstance().addActivity(this);
         requestWindowFeature(Window.FEATURE_NO_TITLE);// 不显示标题
-        L.e("android版本号：" + Build.VERSION.SDK_INT);
         super.onCreate(savedInstanceState);
-        // 初始化请求队列，传入的参数是请求并发值。
-        mQueue = NoHttp.newRequestQueue(); //网络请求
-        mDownloadQueue = NoHttp.newDownloadQueue();//下载请求
         initDate();
         onAdapterToastListener = new OnAdapterToastListener() {
             @Override
@@ -129,34 +113,16 @@ public class ActivitySupport extends AppCompatActivity implements
                 showToastFiled(msgl);
             }
         };
-
-        setStatusBar();
         islogin = sharedPreferencesHelper.getBoolean(LCSharedPreferencesHelper.ISLOGIN);
         gson = new Gson();
-    }
-
-
-    public void setStatusBar() {
-        if (ishide) {
-            //得到当前界面的装饰视图
-//            View decorView = getWindow().getDecorView();
-//            //设置系统UI元素的可见性
-//            decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN);
-        } else {
-            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
-                Eyes.translucentStatusBar(this, true);
-                Eyes.setStatusBarLightMode(this, Color.TRANSPARENT);
-            } else {
-                Window window = getWindow();
-                // 沉浸通知栏
-                window.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS,
-                        WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            }
-        }
 
     }
+
 
     private boolean ishide = false;
+
+    public boolean showWrite = false;
+
 
     /**
      * 是否隐藏状态栏
@@ -248,7 +214,7 @@ public class ActivitySupport extends AppCompatActivity implements
         });
     }
 
-    RelativeLayout layout_error;
+    public RelativeLayout layout_error;
 
     /***
      * 单一布局中使用，第一次无数据时使用
@@ -283,58 +249,61 @@ public class ActivitySupport extends AppCompatActivity implements
     ViewGroup customtitle;
     ChildClickableRelativeLayout childclick;
 
-    public int version = 0;
 
     @Override
     public void setContentView(int layoutResID) {
         // TODO Auto-generated method stub
-        if (version == 0) {
-            all_super = (ViewGroup) LayoutInflater.from(context).inflate(
-                    R.layout.layout_super, null);
-            titleBar = (TitleBar) LayoutInflater.from(this).inflate(
-                    R.layout.layout_activitytitle, null);
-            layout_parent = (RelativeLayout) LayoutInflater.from(context).inflate(
-                    R.layout.layout_parent, null);
-            childclick = (ChildClickableRelativeLayout) layout_parent.findViewById(R.id.childclick);
+        all_super = (ViewGroup) LayoutInflater.from(context).inflate(
+                R.layout.layout_super, null);
+
+
+        titleBar = (TitleBar) LayoutInflater.from(this).inflate(
+                R.layout.layout_activitytitle, null);
+        layout_parent = (RelativeLayout) LayoutInflater.from(context).inflate(
+                R.layout.layout_parent, null);
+        childclick = (ChildClickableRelativeLayout) layout_parent.findViewById(R.id.childclick);
 //        // 自己的布局
-            customtitle = (ViewGroup) LayoutInflater.from(this).inflate(layoutResID,
-                    null);
-            childclick.addView(customtitle);
-            all_super.addView(titleBar, 0);
-            all_super.addView(layout_parent);
-            super.setContentView(all_super);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                L.e("状态栏的高度：" + getStatusBarHeight());
-                titleBar.setTitleBarStatus(getStatusBarHeight());
-            }
-        }
+        customtitle = (ViewGroup) LayoutInflater.from(this).inflate(layoutResID,
+                null);
+        childclick.addView(customtitle);
+        all_super.addView(titleBar, 0);
+        all_super.addView(layout_parent);
+
+        super.setContentView(all_super);
+        setStatusBar();
     }
 
 
     @Override
     public void setContentView(View view) {
         // TODO Auto-generated method stub
-        if (version == 0) {
-            all_super = (ViewGroup) LayoutInflater.from(context).inflate(
-                    R.layout.layout_super, null);
-            titleBar = (TitleBar) LayoutInflater.from(this).inflate(
-                    R.layout.layout_activitytitle, null);
-            layout_parent = (RelativeLayout) LayoutInflater.from(context).inflate(
-                    R.layout.layout_parent, null);
-            childclick = (ChildClickableRelativeLayout) layout_parent.findViewById(R.id.childclick);
+        all_super = (ViewGroup) LayoutInflater.from(context).inflate(
+                R.layout.layout_super, null);
 
-            childclick.addView(view);
-            all_super.addView(titleBar, 0);
-            all_super.addView(layout_parent);
-            super.setContentView(all_super);
+        titleBar = (TitleBar) LayoutInflater.from(this).inflate(
+                R.layout.layout_activitytitle, null);
+        layout_parent = (RelativeLayout) LayoutInflater.from(context).inflate(
+                R.layout.layout_parent, null);
+        childclick = (ChildClickableRelativeLayout) layout_parent.findViewById(R.id.childclick);
+
+        childclick.addView(view);
+
+        all_super.addView(titleBar, 0);
+        all_super.addView(layout_parent);
+
+        super.setContentView(all_super);
+        setStatusBar();
+
+    }
 
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                L.e("状态栏的高度：" + getStatusBarHeight());
-                titleBar.setTitleBarStatus(getStatusBarHeight());
-            }
-        }
-
+    /****
+     * 设置状态栏
+     */
+    public void setStatusBar() {
+        //状态栏透明和间距处理
+        StatusBarUtil.setPaddingSmart(this, titleBar);
+        StatusBarUtil.darkMode(this);
     }
 
 
@@ -362,7 +331,11 @@ public class ActivitySupport extends AppCompatActivity implements
      */
     public void showToastBig(String msg) {
         if (IloomoConfig.init(context).getActivityToast()) {
-            ToastUtil.showShort(context, msg);
+            if (IloomoConfig.init(context).isShowCoutomToast()) {
+                ToastUtil.toastMessage(context, msg);
+            } else {
+                ToastUtil.showShort(context, msg);
+            }
         } else {
             if (isShow) {
                 if (!lastMsg.equals(msg)) {
@@ -382,7 +355,11 @@ public class ActivitySupport extends AppCompatActivity implements
      */
     public void showToastSuccess(String msg) {
         if (IloomoConfig.init(context).getActivityToast()) {
-            ToastUtil.showShort(context, msg);
+            if (IloomoConfig.init(context).isShowCoutomToast()) {
+                ToastUtil.toastMessage(context, msg);
+            } else {
+                ToastUtil.showShort(context, msg);
+            }
         } else {
             if (isShow) {
                 if (!lastMsg.equals(msg)) {
@@ -402,7 +379,11 @@ public class ActivitySupport extends AppCompatActivity implements
      */
     public void showToastFiled(String msg) {
         if (IloomoConfig.init(context).getActivityToast()) {
-            ToastUtil.showShort(context, msg);
+            if (IloomoConfig.init(context).isShowCoutomToast()) {
+                ToastUtil.toastMessage(context, msg);
+            } else {
+                ToastUtil.showShort(context, msg);
+            }
         } else {
             if (isShow) {
                 if (!lastMsg.equals(msg)) {
@@ -422,7 +403,11 @@ public class ActivitySupport extends AppCompatActivity implements
      */
     public void showToastSuccessFinish(String msg) {
         if (IloomoConfig.init(context).getActivityToast()) {
-            ToastUtil.showShort(context, msg);
+            if (IloomoConfig.init(context).isShowCoutomToast()) {
+                ToastUtil.toastMessage(context, msg);
+            } else {
+                ToastUtil.showShort(context, msg);
+            }
         } else {
             if (isShow) {
                 if (!lastMsg.equals(msg)) {
@@ -443,7 +428,11 @@ public class ActivitySupport extends AppCompatActivity implements
      */
     public void showToastFiledFinish(String msg) {
         if (IloomoConfig.init(context).getActivityToast()) {
-            ToastUtil.showShort(context, msg);
+            if (IloomoConfig.init(context).isShowCoutomToast()) {
+                ToastUtil.toastMessage(context, msg);
+            } else {
+                ToastUtil.showShort(context, msg);
+            }
         } else {
             if (isShow) {
                 if (!lastMsg.equals(msg)) {
@@ -469,7 +458,7 @@ public class ActivitySupport extends AppCompatActivity implements
                 context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         final RelativeLayout toast_layout = (RelativeLayout) inflate.inflate(R.layout.toast_layout, null);
         final RelativeLayout relativeLayout = (RelativeLayout) toast_layout.findViewById(R.id.toast_view);
-        RelativeLayout topview = (RelativeLayout) toast_layout.findViewById(R.id.topview);
+
 
         ImageView show = (ImageView) toast_layout.findViewById(R.id.show);
         TextView content_msg = (TextView) toast_layout.findViewById(R.id.toast_text);
@@ -484,18 +473,6 @@ public class ActivitySupport extends AppCompatActivity implements
         content_msg.setText(msg);
         layout_parent.addView(toast_layout);
 
-        if (titleBar.getVisibility() == View.GONE) {
-            topview.setVisibility(View.VISIBLE);
-            ViewGroup.LayoutParams layoutParams = topview.getLayoutParams();
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                layoutParams.height = getStatusBarHeight();
-            } else {
-                layoutParams.height = 0;
-            }
-            topview.setLayoutParams(layoutParams);
-        } else {
-            topview.setVisibility(View.GONE);
-        }
         AnimatorSet set = new AnimatorSet();
         set.playTogether(
                 ObjectAnimator.ofFloat(relativeLayout, "translationY", -AppController.getInstance().dp2px(44), 0)
@@ -605,19 +582,6 @@ public class ActivitySupport extends AppCompatActivity implements
 
 
     /***
-     * 获取状态栏的高度
-     * @return
-     */
-    public int getStatusBarHeight() {
-        int result = 0;
-        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
-        if (resourceId > 0) {
-            result = getResources().getDimensionPixelSize(resourceId);
-        }
-        return result;
-    }
-
-    /***
      * 快速调转方法
      * @param packageContext
      * @param cls
@@ -628,54 +592,12 @@ public class ActivitySupport extends AppCompatActivity implements
     }
 
 
-    /////////////////////////////////////////////////////////////////////////////////搜索栏目start
-
-    /**
-     * 设置搜索框是否隐藏
-     */
-    public void isSearchTitleBarVisibility(boolean isVisibit) {
-        titleBar.isSearchTitleBarVisibility(isVisibit);
-    }
-
-    /**
-     * 设置搜索框的背景
-     */
-    public void searchTitleBarBackground(int draw) {
-        titleBar.searchTitleBarBackground(draw);
-    }
-
-    /**
-     * 设置搜索Hint
-     */
-    public void mEtSearchBarHint(CharSequence hint) {
-        titleBar.mEtSearchBarHint(hint);
-    }
-
-    /**
-     * 设置搜索按钮点击事件
-     */
-    public void mIvSearchClick(OnClickListener onClickListener) {
-        titleBar.mIvSearchClick(onClickListener);
-    }
-
-
-    /**
-     * 设置搜索按钮背景图片
-     */
-    public void mIvSearchBackGround(int draw) {
-        titleBar.mIvSearchBackGround(draw);
-    }
-
-    /////////////////////////////////////////////////////////////////////////////////搜索栏目end
-
-
     /**
      * 设置titleb中间
      *
      * @param
      */
     protected void setRemoveTitle() {
-//        titleBar.setVisibility(View.GONE);
         all_super.removeView(titleBar);
     }
 
@@ -773,6 +695,11 @@ public class ActivitySupport extends AppCompatActivity implements
     }
 
 
+    public void setTitleBarBackground(int color) {
+        titleBar.setBackGb(color);
+    }
+
+
     @Override
     protected void onStart() {
         super.onStart();
@@ -828,24 +755,13 @@ public class ActivitySupport extends AppCompatActivity implements
 
     @Override
     protected void onDestroy() {
-        // 和声明周期绑定，退出时取消这个队列中的所有请求，当然可以在你想取消的时候取消也可以，不一定和声明周期绑定。
-        try {
-            mQueue.cancelBySign(object);
-            for (int i = 0; i < filesList.size(); i++) {
-                DownLoad downLoad = filesList.get(i);
-                downLoad.getmRequest().cancelBySign(i);
-            }
-        } catch (Exception e) {
-        }
-        // 因为回调函数持有了activity，所以退出activity时请停止队列。
-        mQueue.stop();
-        mDownloadQueue.stop();
+        RequestManager.getInstance().cancel(cancelTag);
         super.onDestroy();
         //可以取消同一个tag的网络请求
         //Acitvity 释放子view资源
         ActivityPageManager.unbindReferences(all_super);
         ActivityPageManager.getInstance().removeActivity(this);
-
+        toastHandler = null;
     }
 
 
@@ -871,6 +787,7 @@ public class ActivitySupport extends AppCompatActivity implements
     @Override
     public void isExit() {
         ActivityPageManager.getInstance().exit(this);
+        toastHandler = null;
     }
 
     @Override
@@ -1031,15 +948,38 @@ public class ActivitySupport extends AppCompatActivity implements
      * 发起请求。
      *
      * @param what      what.
-     * @param request   请求对象。
      * @param canCancel 是否能被用户取消。
      * @param isLoading 实现显示加载框。
-     * @param <T>       想请求到的数据类型。
      */
-    public <T> void request(int what, Request<T> request,
-                            boolean canCancel, boolean isLoading, Class<?> modelClass) {
-        request.setCancelSign(object);
-        mQueue.add(what, request, new HttpBaseResponListener<>(this, request, canCancel, isLoading, modelClass));
+    public void request(final int what, final String url, Map<String, String> stringStringMap,
+                        boolean canCancel, boolean isLoading, final Class<?> modelClass) {
+        if(isLoading){
+            DialogUtil.startDialogLoading(context,canCancel);
+        }
+        SimpleBodyRequest.Api spi = Kalle.post(url);
+        spi.tag(cancelTag);
+        Iterator it = stringStringMap.keySet().iterator();
+        while (it.hasNext()) {
+            String keys = it.next().toString();
+            spi.param(keys, stringStringMap.get(keys));
+        }
+
+        spi.perform(new SimpleCallback<String>() {
+            @Override
+            public void onResponse(SimpleResponse<String, String> response) {
+                DialogUtil.stopDialogLoading(context);
+                if (response.isSucceed()) {
+                    String result = "";
+                    result = UnicodeUtils.decodeUnicode(response.succeed());
+                    L.e("请求：url="+url+"\n返回值："+result);
+                    onSucceedBase(what, result, modelClass);
+                } else {
+                    onFildBase(what,response.failed(), modelClass);
+                }
+            }
+        });
+
+
     }
 
 
@@ -1047,43 +987,37 @@ public class ActivitySupport extends AppCompatActivity implements
      * 发起请求。
      *
      * @param what      what.
-     * @param request   请求对象。
      * @param canCancel 是否能被用户取消。
      * @param isLoading 实现显示加载框。
-     * @param <T>       想请求到的数据类型。
      */
-    public <T> void requestV2(int what, Request<T> request,
-                              boolean canCancel, boolean isLoading, Class<?> modelClass) {
-        request.setCancelSign(object);
-        mQueue.add(what, request, new HttpBaseResponListener<>(this, request, canCancel, isLoading, modelClass));
+    public void requestV2(final int what, final String url, Map<String, String> stringStringMap,
+                          boolean canCancel, boolean isLoading, final Class<?> modelClass) {
+        if(isLoading){
+            DialogUtil.startDialogLoading(context,canCancel);
+        }
+        SimpleBodyRequest.Api spi = Kalle.post(url);
+        spi.tag(cancelTag);
+        Iterator it = stringStringMap.keySet().iterator();
+        while (it.hasNext()) {
+            String keys = it.next().toString();
+            spi.param(keys, stringStringMap.get(keys));
+        }
+        spi.perform(new SimpleCallback<String>() {
+            @Override
+            public void onResponse(SimpleResponse<String, String> response) {
+                DialogUtil.stopDialogLoading(context);
+                if (response.isSucceed()) {
+                    String result = "";
+                    result = UnicodeUtils.decodeUnicode(response.succeed());
+                    L.e("请求：url="+url+"\n返回值："+result);
+                    onSucceedBase(what, result, modelClass);
+                } else {
+                    onFildBase(what,response.failed(), modelClass);
+                }
+            }
+        });
     }
 
-
-
-    /****
-     * 内部类  网络回调
-     * @param <T>
-     */
-    private class HttpBaseResponListener<T> extends HttpV2ResponseListener {
-
-        public HttpBaseResponListener(Activity activity, Request request, boolean canCancel, boolean isLoading, Class<?> modelClass) {
-            super(activity, request, canCancel, isLoading, modelClass);
-        }
-
-        @Override
-        public void onSucceed(int what, Response response) {
-            super.onSucceed(what, response);
-            String request = response.get().toString();
-            L.e("返回值：" + UnicodeUtils.decodeUnicode(request));
-            onSucceedBase(what, response, request, modelClass);
-        }
-
-        @Override
-        public void onFailed(int what, Response response) {
-            super.onFailed(what, response);
-            onFildBase(what, response, modelClass);
-        }
-    }
 
     /***
      * 网络返回失败，回调面对activity
@@ -1095,6 +1029,7 @@ public class ActivitySupport extends AppCompatActivity implements
     }
 
     /***
+     * 需要把这个方法放在onSuccessBase
      * 网络返回成功，原数据
      * @param what
      * @param modelClass
@@ -1104,6 +1039,7 @@ public class ActivitySupport extends AppCompatActivity implements
     }
 
     /***
+     * 需要把这个方法放在onSuccessBase
      * 网络返回成功，String数据
      * @param what
      * @param result
@@ -1117,67 +1053,21 @@ public class ActivitySupport extends AppCompatActivity implements
     /***
      *  网络请求成功的回调（父类调用）
      * @param what
-     * @param response
      * @param request
      * @param modelClass
      */
-    public void onSucceedBase(int what, Response response, String request, Class<?> modelClass) {
+    public void onSucceedBase(int what, String request, Class<?> modelClass) {
 
     }
 
     /***
      * 网络请求失败回调（父类调用）
      * @param what
-     * @param response
      * @param modelClass
      */
-    public void onFildBase(int what, Response response, Class<?> modelClass) {
+    public void onFildBase(int what, String fild,Class<?> modelClass) {
 
     }
 
-
-    List<DownLoad> filesList = new ArrayList<>();
-
-    int queueCount = 0;
-
-    /**
-     * 下载----第一启动下载时调用，用downLoadStop调用停止下载，重新启动调用downLoadRestart
-     *
-     * @param what
-     * @param url
-     * @param path
-     * @param filename
-     * @param downloadCallback
-     */
-    public int downLoad(int what, String url, String path, String filename, DownloadCallback downloadCallback) {
-        DownloadRequest mRequest = new DownloadRequest(url, RequestMethod.GET, path, filename, true, true);
-        mRequest.setCancelSign(queueCount);
-        mDownloadQueue.add(what, mRequest, downloadCallback);
-        DownLoad downLoad = new DownLoad();
-        downLoad.setDwhat(what);
-        downLoad.setDdownloadCallback(downloadCallback);
-        downLoad.setmRequest(mRequest);
-        filesList.add(downLoad);
-        queueCount++;
-        return queueCount - 1;
-    }
-
-
-    /***
-     * 重新开始
-     */
-    public void downLoadRestart(int mqueueCount) {
-        DownLoad downLoad = filesList.get(mqueueCount);
-        mDownloadQueue.add(downLoad.getDwhat(), downLoad.getmRequest(), downLoad.getDdownloadCallback());
-    }
-
-    /***
-     * 停止下载
-     */
-    public void downLoadStop(int mqueueCount) {
-        DownLoad downLoad = filesList.get(mqueueCount);
-        if (downLoad.getmRequest() != null)
-            downLoad.getmRequest().cancel();
-    }
 
 }

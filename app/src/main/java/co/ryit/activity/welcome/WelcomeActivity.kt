@@ -13,11 +13,12 @@ import co.wpt.login.LoginPlatform
 import co.wpt.login.LoginResult
 import co.wpt.login.result.*
 import co.wpt.model.ShareListener
-import com.tbruyelle.rxpermissions.RxPermissions
 import com.umeng.socialize.UMShareAPI
 import android.content.Intent
 import co.ryit.activity.IndexActivity
 import com.nineoldandroids.animation.Animator
+import com.tbruyelle.rxpermissions2.Permission
+import com.tbruyelle.rxpermissions2.RxPermissions
 import kotlinx.android.synthetic.main.layout_app.*
 
 
@@ -26,20 +27,23 @@ class WelcomeActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.layout_app)
         setRemoveTitle()
-        RxPermissions.getInstance(this)
-                .request(Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                        Manifest.permission.READ_PHONE_STATE,
-                        Manifest.permission.INTERNET,
-                        Manifest.permission.ACCESS_NETWORK_STATE)
-                .subscribe { granted ->
-                    if (granted!!) { // 在android 6.0之前会默认返回true
-                        Log.e("获取权限", "获取权限成功");
+        val rxPermissions = RxPermissions(this)
+        rxPermissions.setLogging(true)
+        rxPermissions.requestEach(Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.READ_PHONE_STATE)
+                .subscribe(Consumer<Permission> { permission ->
+                    if (permission.granted) {
+                        startWelcomPic()
+
+                    } else if (permission.shouldShowRequestPermissionRationale) {
+                        // 权限被拒绝，还可以再次请求
+
                     } else {
-                        // 未获取权限
-                        Log.e("获取权限", "获取权限失败");
+                        // 权限被拒绝，永不显示
+
                     }
-                    startWelcomPic()
-                }
+                })
     }
 
 //    fun onDeleteLogin(view: View) {

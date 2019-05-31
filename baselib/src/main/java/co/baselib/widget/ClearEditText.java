@@ -16,7 +16,12 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import co.baselib.R;
+import co.baselib.global.IloomoConfig;
+import co.baselib.model.OnChangeListener;
 import co.baselib.model.OnTextChangeListener;
+import co.baselib.utils.L;
+import co.baselib.utils.PImageLoaderUtils;
+import co.baselib.utils.ToastUtil;
 
 
 /**
@@ -48,18 +53,26 @@ public class ClearEditText extends RelativeLayout {
         init(context);
     }
 
-    private void init(Context context) {
+    Context context;
+
+    private void init(final Context context) {
+        this.context = context;
         View inflate = LayoutInflater.from(context).inflate(R.layout.layout_clear_editview, null);
         re_edit = (EditText) inflate.findViewById(R.id.re_edit);
 
         password_icon = (RelativeLayout) inflate.findViewById(R.id.password_icon);
-
 
         rl_password_hidden = (RelativeLayout) inflate.findViewById(R.id.rl_password_hidden);
         iv_password_hidden = (ImageView) inflate.findViewById(R.id.iv_password_hidden);
 
         input_icon_re = (RelativeLayout) inflate.findViewById(R.id.input_icon_re);
         input_icon = (ImageView) inflate.findViewById(R.id.input_icon);
+        ImageView clear_icon = (ImageView) inflate.findViewById(R.id.clear_edit);
+
+        if (IloomoConfig.init(context).getCoutomClear()) {
+            PImageLoaderUtils.getInstance().displayIMG(IloomoConfig.init(context).getClear(), clear_icon, context);
+            PImageLoaderUtils.getInstance().displayIMG(IloomoConfig.init(context).getBlank(), iv_password_hidden, context);
+        }
 
         re_edit.addTextChangedListener(mTextWatcher);
 
@@ -69,11 +82,19 @@ public class ClearEditText extends RelativeLayout {
                 if (isHidden) {
                     //设置EditText文本为可见的
                     re_edit.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
-                    iv_password_hidden.setImageResource(R.drawable.show);
+                    if (IloomoConfig.init(context).getCoutomClear()) {
+                        PImageLoaderUtils.getInstance().displayIMG(IloomoConfig.init(context).getShow(), iv_password_hidden, context);
+                    } else {
+                        iv_password_hidden.setImageResource(R.drawable.show);
+                    }
                 } else {
                     //设置EditText文本为隐藏的
                     re_edit.setTransformationMethod(PasswordTransformationMethod.getInstance());
-                    iv_password_hidden.setImageResource(R.drawable.blank);
+                    if (IloomoConfig.init(context).getCoutomClear()) {
+                        PImageLoaderUtils.getInstance().displayIMG(IloomoConfig.init(context).getBlank(), iv_password_hidden, context);
+                    } else {
+                        iv_password_hidden.setImageResource(R.drawable.blank);
+                    }
                 }
                 isHidden = !isHidden;
             }
@@ -90,9 +111,9 @@ public class ClearEditText extends RelativeLayout {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
 //                if (hasFocus) {
-                if (re_edit.getText().length() > 0)
+                if (re_edit.getText().length() > 0) {
                     password_icon.setVisibility(View.VISIBLE);
-                else {
+                } else {
                     password_icon.setVisibility(View.GONE);
                 }
 //                } else {
@@ -128,11 +149,19 @@ public class ClearEditText extends RelativeLayout {
         private static final int PHONE_INDEX_15 = 15;
 
         public void onTextChanged(CharSequence s, int start, int before, int count) {
+            if (onChangeListener != null)
+                onChangeListener.change(s, start, before, count);
             if (!delete_icon) {
                 if (s.length() > 0) {
                     password_icon.setVisibility(View.VISIBLE);
+                    if (ispassword) {
+                        rl_password_hidden.setVisibility(View.VISIBLE);
+                    }
                 } else {
                     password_icon.setVisibility(View.GONE);
+                    if (ispassword) {
+                        rl_password_hidden.setVisibility(View.GONE);
+                    }
                 }
             }
 
@@ -565,5 +594,19 @@ public class ClearEditText extends RelativeLayout {
         this.isListener = isListener;
     }
 
+
+    public OnChangeListener onChangeListener;
+
+
+    public void setOnChangeListener(OnChangeListener onChangeListener) {
+        this.onChangeListener = onChangeListener;
+    }
+
+
+    private boolean ispassword = false;
+
+    public void setPassword(boolean ispassword) {
+        this.ispassword = ispassword;
+    }
 
 }

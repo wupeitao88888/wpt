@@ -2,23 +2,29 @@ package co.baselib.global;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.Intent;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
+import android.util.Log;
 
 import com.orhanobut.logger.AndroidLogAdapter;
 import com.orhanobut.logger.FormatStrategy;
 import com.orhanobut.logger.Logger;
 import com.orhanobut.logger.PrettyFormatStrategy;
+import com.tencent.smtt.sdk.QbSdk;
 import com.umeng.analytics.MobclickAgent;
-import com.yanzhenjie.nohttp.InitializationConfig;
-import com.yanzhenjie.nohttp.NoHttp;
-import com.yanzhenjie.nohttp.OkHttpNetworkExecutor;
-import com.yanzhenjie.nohttp.cache.DBCacheStore;
-import com.yanzhenjie.nohttp.cookie.DBCookieStore;
+import com.yanzhenjie.kalle.Kalle;
+import com.yanzhenjie.kalle.KalleConfig;
+import com.yanzhenjie.kalle.OkHttpConnectFactory;
+import com.yanzhenjie.kalle.cookie.DBCookieStore;
+
+
+import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.SSLContext;
 
-import co.baselib.BuildConfig;
 import co.baselib.R;
+import co.baselib.service.PreLoadX5Service;
 import co.baselib.utils.ActivityPageManager;
 import co.baselib.utils.CrashHandler;
 import co.baselib.utils.L;
@@ -55,6 +61,8 @@ public class AppController {
         initXutils();
         initJLog();
         initImageLoader();
+
+        x5init();
     }
 
 
@@ -62,49 +70,19 @@ public class AppController {
         return mApplication.getResources().getText(R.string.error_not_found_server).toString();
     }
 
-    /***
-     * 数据库版本
-     * @param dbversion
-     */
-    public void setDBVersion(int dbversion) {
-        AppConfig.DBVERSION = dbversion;
-    }
 
-    /***
-     * 数据库名称
-     * @param dbName
-     */
-    public void setDBName(String dbName) {
-        AppConfig.dbName = dbName;
-    }
+    public void x5init() {
 
-    /***
-     * 谁否使用证书
-     * @param isCertificate
-     */
-    public void setIsCertificate(boolean isCertificate) {
-        AppConfig.is_certificate = isCertificate;
-    }
 
-    /***
-     * 正式服切换
-     * @param ISZENGSHI
-     */
-    public void setISZENGSHI(boolean ISZENGSHI) {
-        AppConfig.is_certificate = ISZENGSHI;
-    }
+        Intent intent = new Intent(context, PreLoadX5Service.class);
+        context.startService(intent);
 
+    }
 
     /***
      * 程序初始化
      */
     public void appInit() {
-        if (!AppConfig.ISZENGSHI) {
-            L.isDebug = true;
-        } else {
-            L.isDebug = false;
-
-        }
         CrashHandler crashHandler = CrashHandler.getInstance();
         crashHandler.init(context);
     }
@@ -113,73 +91,44 @@ public class AppController {
      * 初始化nohttp
      */
     private void netInit() {
-        com.yanzhenjie.nohttp.Logger.setDebug(AppConfig.ISZENGSHI);// 开启NoHttp的调试模式, 配置后可看到请求过程、日志和错误信息。
-        com.yanzhenjie.nohttp.Logger.setTag("NoHttp：");// 设置NoHttp打印Log的tag。
-        InitializationConfig config;
-        if (AppConfig.is_certificate) {
-            SSLContext sslContext = SSLContextUtil.getSSLContext();
-            config = InitializationConfig.newBuilder(context)
+//        com.yanzhenjie.nohttp.Logger.setDebug(IloomoConfig.init(context).isDebug());// 开启NoHttp的调试模式, 配置后可看到请求过程、日志和错误信息。
+//        com.yanzhenjie.nohttp.Logger.setTag("NoHttp：");// 设置NoHttp打印Log的tag。
+        KalleConfig config;
+
+        if (IloomoConfig.init(context).isCertificate() && IloomoConfig.init(context).getInputStream() != null) {
+            SSLContext sslContext = SSLContextUtil.getSSLContext(IloomoConfig.init(context).getInputStream());
+
+            config = KalleConfig.newBuilder()
                     // 全局连接服务器超时时间，单位毫秒，默认10s。
-                    .connectionTimeout(60 * 1000)
+                    .connectionTimeout(60 * 1000, TimeUnit.MILLISECONDS)
                     // 全局等待服务器响应超时时间，单位毫秒，默认10s。
-                    .readTimeout(60 * 1000)
+                    .readTimeout(60 * 1000, TimeUnit.MILLISECONDS)
                     // 配置缓存，默认保存数据库DBCacheStore，保存到SD卡使用DiskCacheStore。
-                    .cacheStore(
-                            // 如果不使用缓存，setEnable(false)禁用。
-                            new DBCacheStore(context).setEnable(true)
-                    )
-                    // 配置Cookie，默认保存数据库DBCookieStore，开发者可以自己实现CookieStore接口。
-                    .cookieStore(
-                            // 如果不维护cookie，setEnable(false)禁用。
-                            new DBCookieStore(context).setEnable(true)
-                    )
+//                    .cookieStore(DBCookieStore.newBuilder(context).build())
                     // 配置网络层，默认URLConnectionNetworkExecutor，如果想用OkHttp：OkHttpNetworkExecutor。
-                    .networkExecutor(new OkHttpNetworkExecutor())
-                    // 全局通用Header，add是添加，多次调用add不会覆盖上次add。
-//                .addHeader()
-                    // 全局通用Param，add是添加，多次调用add不会覆盖上次add。
-//                .addParam()
+                    .connectFactory(OkHttpConnectFactory.newBuilder().build())
                     .sslSocketFactory(sslContext.getSocketFactory()) // 全局SSLSocketFactory。
-//                .hostnameVerifier() // 全局HostnameVerifier。
-                    .retry(3) // 全局重试次数，配置后每个请求失败都会重试x次。
                     .build();
+
         } else {
-            config = InitializationConfig.newBuilder(context)
+            config = KalleConfig.newBuilder()
                     // 全局连接服务器超时时间，单位毫秒，默认10s。
-                    .connectionTimeout(60 * 1000)
+                    .connectionTimeout(60 * 1000, TimeUnit.MILLISECONDS)
                     // 全局等待服务器响应超时时间，单位毫秒，默认10s。
-                    .readTimeout(60 * 1000)
+                    .readTimeout(60 * 1000, TimeUnit.MILLISECONDS)
                     // 配置缓存，默认保存数据库DBCacheStore，保存到SD卡使用DiskCacheStore。
-                    .cacheStore(
-                            // 如果不使用缓存，setEnable(false)禁用。
-                            new DBCacheStore(context).setEnable(true)
-                    )
-                    // 配置Cookie，默认保存数据库DBCookieStore，开发者可以自己实现CookieStore接口。
-                    .cookieStore(
-                            // 如果不维护cookie，setEnable(false)禁用。
-                            new DBCookieStore(context).setEnable(true)
-                    )
+//                    .cookieStore(DBCookieStore.newBuilder(context).build())
                     // 配置网络层，默认URLConnectionNetworkExecutor，如果想用OkHttp：OkHttpNetworkExecutor。
-                    .networkExecutor(new OkHttpNetworkExecutor())
-                    // 全局通用Header，add是添加，多次调用add不会覆盖上次add。
-//                .addHeader()
-                    // 全局通用Param，add是添加，多次调用add不会覆盖上次add。
-//                .addParam()
-//                .hostnameVerifier() // 全局HostnameVerifier。
-                    .retry(3) // 全局重试次数，配置后每个请求失败都会重试x次。
+                    .connectFactory(OkHttpConnectFactory.newBuilder().build())
                     .build();
         }
-
-        NoHttp.initialize(config);
+        Kalle.setConfig(config);
     }
 
     /***
      * umeng初始化
      */
     private void initUmAppkey() {
-//        PlatformConfig.setWeixin(AppConfig.WEIXIN_APPID, AppConfig.WEIXIN_APPSECRET);
-//        PlatformConfig.setQQZone(AppConfig.QQ_APPID, AppConfig.QQ_APPKEY);
-//        PlatformConfig.setSinaWeibo(AppConfig.WEIBO_APPID, AppConfig.WEIBO_APPKEY, AppConfig.WEIBO_URL);
 
         MobclickAgent.setScenarioType(context, MobclickAgent.EScenarioType.E_UM_NORMAL);
         // SDK在统计Fragment时，需要关闭Activity自带的页面统计，
@@ -210,7 +159,7 @@ public class AppController {
         Logger.addLogAdapter(new AndroidLogAdapter() {
             @Override
             public boolean isLoggable(int priority, String tag) {
-                return !AppConfig.ISZENGSHI;
+                return !IloomoConfig.init(context).isDebug();
             }
         });
 
@@ -225,23 +174,6 @@ public class AppController {
 
 
     private void initImageLoader() {
-//        DisplayImageOptions defaultOptions = new DisplayImageOptions.Builder()
-//                .cacheInMemory(false)
-//                .imageScaleType(ImageScaleType.EXACTLY)
-//                .cacheOnDisk(true)
-//                .build();
-//
-//        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(context)
-//                .threadPriority(Thread.NORM_PRIORITY - 2)
-//                .defaultDisplayImageOptions(defaultOptions)
-//                .denyCacheImageMultipleSizesInMemory()
-//                .diskCacheFileNameGenerator(new Md5FileNameGenerator())
-//                .diskCache(new UnlimitedDiskCache(StorageUtils.getOwnCacheDirectory(context, AppConstants.APP_IMAGE)))
-//                .diskCacheSize(100 * 1024 * 1024).tasksProcessingOrder(QueueProcessingType.LIFO)
-//                .memoryCache(new LruMemoryCache(2 * 1024 * 1024)).memoryCacheSize(2 * 1024 * 1024)
-//                .threadPoolSize(3)
-//                .build();
-//        ImageLoader.getInstance().init(config);
     }
 
 

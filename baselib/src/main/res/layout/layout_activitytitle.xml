@@ -2,11 +2,6 @@
 <co.baselib.widget.TitleBar xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/lc_title"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    >
+    android:layout_height="wrap_content">
 
 </co.baselib.widget.TitleBar>
-
-
-
-

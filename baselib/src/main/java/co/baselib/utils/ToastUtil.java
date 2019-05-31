@@ -5,7 +5,16 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.content.ContextCompat;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import co.baselib.R;
+import co.baselib.global.IloomoConfig;
 
 // TODO: Auto-generated Javadoc
 
@@ -101,8 +110,6 @@ public class ToastUtil {
     }
 
 
-
-
     /**
      * 短时间显示Toast
      *
@@ -192,6 +199,25 @@ public class ToastUtil {
         if (null != toast) {
             toast.cancel();
         }
+    }
+
+    private static Toast coutomtoast = null;
+    /**
+     * 使用自定义ToastView
+     */
+    public static Toast toastMessage(Context context, String messages) {
+        View coutomToast = IloomoConfig.init(context).getCoutomToast();
+        TextView coutomToastTextView = IloomoConfig.init(context).getCoutomToastTextView();
+        coutomToastTextView.setText(messages);
+
+        if (coutomtoast == null) {
+            coutomtoast = new Toast(context);
+        }
+        coutomtoast.setGravity(Gravity.CENTER, 0, -220);//setGravity用来设置Toast显示的位置，相当于xml中的android:gravity或android:layout_gravity
+        coutomtoast.setDuration(Toast.LENGTH_SHORT);//setDuration方法：设置持续时间，以毫秒为单位。该方法是设置补间动画时间长度的主要方法
+        coutomtoast.setView(coutomToast); //添加视图文件
+        coutomtoast.show();
+        return coutomtoast;
     }
 
 

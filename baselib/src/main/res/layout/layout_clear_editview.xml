@@ -43,6 +43,7 @@
                 android:visibility="gone">
 
                 <ImageView
+                    android:id="@+id/clear_edit"
                     style="@style/img_icon"
                     android:src="@drawable/emotionstore_progresscancelbtn" />
             </RelativeLayout>

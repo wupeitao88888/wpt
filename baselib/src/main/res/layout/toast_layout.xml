@@ -4,16 +4,11 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <RelativeLayout
-        android:id="@+id/topview"
-        android:layout_width="match_parent"
-        android:layout_height="44dp"></RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/toast_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/topview"
         android:background="@color/color_FEDFDF"
         android:minHeight="44dp">
 

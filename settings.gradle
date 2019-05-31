@@ -1,1 +1,1 @@
-include ':app',':thirdparty', ':baselib'
+include ':app', ':thirdparty', ':baselib', ':jmessage', ':base-adapter-library', ':baseadapter-recyclerview'

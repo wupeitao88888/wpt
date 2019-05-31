@@ -30,7 +30,7 @@
 
 
 
-一、权限获取方式
+### 一、权限获取方式
 
 
             RxPermissions.getInstance(this)
@@ -48,7 +48,7 @@
                 }
 
 
-二、欢迎页面
+### 二、欢迎页面
 
 a、在xml页面中添加
 
@@ -96,10 +96,36 @@ e、去掉titlebar和去掉状态栏
        }
 
 
-二、tabhost详见"FlycoTablayout_README_CN.md"这个文件，因为是引用"H07000223"这个哥们写的库，鸣谢
+### 二、tabhost详见"FlycoTablayout_README_CN.md"这个文件，因为是引用"H07000223"这个哥们写的库，鸣谢
+
+### 三、MLImageViewR.class
+
+### 特点
+
+* 基于AppCompatImageView扩展
+* 支持圆角、圆形显示
+
+### 支持的属性、方法
+|属性名|含义|默认值|对应方法
+|---|---|---|---|
+|is_circle|是否显示为圆形（默认为矩形）|false|isCircle()
+|radius_top_left|左上角圆角半径|0dp|setCornerTopLeftRadius()
+|radius_top_right|右上角圆角半径|0dp|setCornerTopRightRadius()
+|radius_btm_left|左下角圆角半径|0dp|setCornerBottomLeftRadius()
+|radius_btm_right|右下角圆角半径|0dp|setCornerBottomRightRadius()
+|corner_radius|统一设置四个角的圆角半径|0dp|setCornerRadius()
 
 
 
+
+
+### 三、基本设置 IloomoConfig.class
+
+a、数据库名称设置
+
+    setDbName(String dbname)  dbname: 数据库名字
+
+    
 
 
 

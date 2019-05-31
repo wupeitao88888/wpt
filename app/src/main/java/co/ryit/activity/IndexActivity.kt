@@ -1,18 +1,29 @@
 package co.ryit.activity
 
+import android.Manifest
 import android.graphics.Color
+import android.hardware.Camera
 import android.os.Bundle
 import android.support.v4.app.FragmentPagerAdapter
 import android.support.v4.view.ViewPager
+import android.util.Log
+import android.widget.Toast
 import co.ryit.R
 import co.ryit.activity.home.FragmentHome
+import co.ryit.activity.home.FragmentMe
+import co.ryit.activity.message.FragmentMessage
 import co.ryit.base.BaseActivity
 import co.ryit.base.BaseFragment
 import co.ryit.db.bean.ThemeIndex
 import co.ryit.db.db.DataBase
 import com.flyco.tablayout.listener.CustomTabEntity
 import com.flyco.tablayout.listener.OnTabSelectListener
+import com.tbruyelle.rxpermissions2.Permission
+import com.tbruyelle.rxpermissions2.RxPermissions
+import io.reactivex.functions.Consumer
+
 import kotlinx.android.synthetic.main.activity_index.*
+import java.io.IOException
 import java.util.ArrayList
 
 class IndexActivity : BaseActivity() {
@@ -25,9 +36,12 @@ class IndexActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_index)
         setRemoveTitle()
-        themeItem = DataBase(context, ThemeIndex::class.java)
-        initData()
-        initView()
+
+                        themeItem = DataBase (context, ThemeIndex::class.java)
+                        initData()
+                        initView()
+
+
     }
 
     private fun initData() {
@@ -36,7 +50,7 @@ class IndexActivity : BaseActivity() {
         home1.tabUnselectedIcon = R.mipmap.ic_launcher_round
         home1.tabTitle = "主页"
         themeIcon.add(home1)
-        
+
         val home2 = ThemeIndex()
         home2.tabSelectedIcon = R.mipmap.ic_launcher
         home2.tabUnselectedIcon = R.mipmap.ic_launcher_round
@@ -56,9 +70,9 @@ class IndexActivity : BaseActivity() {
         themeIcon.add(home4)
 
         mFragments.add(FragmentHome())
+        mFragments.add(FragmentMessage())
         mFragments.add(FragmentHome())
-        mFragments.add(FragmentHome())
-        mFragments.add(FragmentHome())
+        mFragments.add(FragmentMe())
     }
 
     private fun initView() {
@@ -87,13 +101,9 @@ class IndexActivity : BaseActivity() {
         tabhost.setOnTabSelectListener(object : OnTabSelectListener {
             override fun onTabSelect(position: Int) {
 
-                when (position) {
-                    0 -> {
-                    }
-                    1 -> {
-                    }
-                    else -> content_viewpager.currentItem = position
-                }
+
+                content_viewpager.currentItem = position
+
             }
 
             override fun onTabReselect(position: Int) {

@@ -2,6 +2,7 @@ package co.baselib.utils;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.Nullable;
 import android.widget.ImageView;
 
@@ -159,6 +160,22 @@ public class PImageLoaderUtils {
         } catch (Exception e) {
 
         }
+    }
+
+
+    public void displayIMG(Drawable uri, ImageView imageView, Context context) {
+        try {
+
+            RequestOptions options = new RequestOptions();
+            options.placeholder(R.drawable.gray);
+            options.error(R.drawable.gray);
+            Glide.with(context).load(uri).into(imageView);
+
+        } catch (Exception e) {
+
+        }
+
+
     }
 
     public void displayIMG(int uri, ImageView imageView, Context context) {

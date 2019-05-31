@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="colorPrimary">#4054B2</color>
+    <color name="colorPrimaryDark">#4054B2</color>
+    <color name="colorPrimaryOverlay">#4054B2</color>
+    <color name="colorAccent">#4054B2</color>
+    <color name="colorDivision">#33aaaaaa</color>
+    <color name="color_4054b2">#4054B2</color>
 
 </resources>

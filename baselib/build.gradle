@@ -2,13 +2,13 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion 27
+    compileSdkVersion 28
 
 
 
     defaultConfig {
         minSdkVersion 14
-        targetSdkVersion 27
+        targetSdkVersion 28
         versionCode 1
         versionName "1.0"
 
@@ -21,7 +21,9 @@ android {
         buildConfigField "String", "foldercrash", "\"${rootProject.ext.android.foldercrash}\""
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-
+        ndk {
+            abiFilters 'armeabi', "x86", "mips", "armeabi-v7a"
+        }
     }
 
     buildTypes {
@@ -34,33 +36,40 @@ android {
     lintOptions {
         abortOnError false
     }
+    packagingOptions {
+        exclude 'META-INF/rxjava.properties'
+    }
 }
 
 
 dependencies {
     api fileTree(include: ['*.jar'], dir: 'libs')
     //noinspection GradleCompatible
-    api 'com.android.support:appcompat-v7:27.1.1'
+    api 'com.android.support:appcompat-v7:28.0.0'
     api 'com.google.code.gson:gson:2.8.5'
     api files('libs/umeng-analytics-7.5.3.jar')
-    api 'com.android.support:design:27.1.1'
-    api 'com.yanzhenjie.nohttp:okhttp:1.1.11'
+    api 'com.android.support:design:28.0.0'
+    api 'com.yanzhenjie:okalle:0.1.5'
     api 'com.orhanobut:logger:2.1.1'
     api 'com.zhy:base-rvadapter:3.0.3'
-    annotationProcessor 'com.github.bumptech.glide:compiler:4.7.1'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.8.0'
     //https://github.com/sfsheng0322/GlideImageView
-    api 'com.github.bumptech.glide:okhttp3-integration:4.7.1'
-    api 'com.scwang.smartrefresh:SmartRefreshLayout:1.0.4-4'
+    api 'com.github.bumptech.glide:okhttp3-integration:4.8.0'
+    implementation 'com.scwang.smartrefresh:SmartRefreshLayout:1.1.0-alpha-18'
     //没有使用特殊Header，可以不加这行
-    api 'com.scwang.smartrefresh:SmartRefreshHeader:1.0.3'
+    implementation 'com.scwang.smartrefresh:SmartRefreshHeader:1.1.0-alpha-18'
     //请参照文档编写https://github.com/H07000223/FlycoTabLayout/blob/master/README_CN.md
     api 'com.flyco.tablayout:FlycoTabLayout_Lib:2.1.2@aar'
     api files('libs/nineoldandroids-2.4.0.jar')
     api files('libs/ormlite-android-5.0.jar')
     api files('libs/ormlite-core-5.0.jar')
-    api 'com.tbruyelle.rxpermissions:rxpermissions:0.7.0@aar'
+    api 'com.github.tbruyelle:rxpermissions:0.10.2'
     api 'com.jakewharton.rxbinding:rxbinding:1.0.0'
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    api "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    api 'org.greenrobot:eventbus:3.1.1'
+    //    implementation project(':base-adapter-library')
+    //    implementation project(':baseadapter-recyclerview')
+    implementation files('libs/tbs_sdk_thirdapp_v3.6.0.1310_43612_sharewithdownload_withoutGame_obfs_20180706_163319.jar')
 }
 
 apply plugin: 'maven'
@@ -70,16 +79,17 @@ apply plugin: 'maven'
 uploadArchives {
     repositories {
         mavenDeployer {
-            repository(url: "http://58.87.124.224:8081/repository/baselib/") {
+//            repository(url: "http://58.87.124.224:8082/repository/baselib/") {
+            repository(url: "http://localhost:8082/repository/baselib/") {
                 authentication(userName: "admin", password: "admin123")
             }
             pom.project {
                 name 'baselib'
-                version '1.0.9'
+                version '1.8.0'
                 artifactId 'baselib'
                 groupId 'co.baselib'
                 packaging 'aar'
-                description 'baselib 添加权限申请'
+                description 'bas'
             }
         }
     }

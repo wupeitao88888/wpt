@@ -1,0 +1,66 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 27
+
+
+
+    defaultConfig {
+        minSdkVersion 14
+        targetSdkVersion 27
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    lintOptions {
+        abortOnError false
+    }
+
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'com.android.support:appcompat-v7:27.1.1'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    api 'cn.jiguang.sdk:jmessage:2.7.0'
+    // 此处以JMessage 2.7.0 版本为例。
+    api 'cn.jiguang.sdk:jcore:1.2.3'
+    // 此处以JCore 1.2.3 版本为例。
+}
+
+
+apply plugin: 'maven'
+
+
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository(url: "http://localhost:8082/repository/jmessage/") {
+                authentication(userName: "admin", password: "admin123")
+            }
+            pom.project {
+                name 'jmessage'
+                version '1.0.3'
+                artifactId 'jmessage'
+                groupId 'co.jmessage'
+                packaging 'aar'
+                description 'jmessage 极光IM'
+            }
+        }
+    }
+}
+repositories {
+    mavenCentral()
+}

@@ -43,64 +43,7 @@ open class BaseFragment : FragmentSupport() {
 
     override fun onSucceedBase(what: Int, response: Response<*>?, request: String?, modelClass: Class<*>?) {
         super.onSucceedBase(what, response, request, modelClass)
-        try {
-            val bmodel = gson.fromJson(request, BaseModel::class.java)
-            setTimeSync(bmodel.timestamp)//存储当前时间和服务器时间对比时间差
-            if ("0" == bmodel.errorCode) {
-                val obj = gson.fromJson(request, modelClass)
-                onSucceedV2(what, obj)
-                onSucceedV2(what, request, obj)
-            } else if ("20004" == bmodel.getErrorCode()) {
-                if (HttpV2ResponseListener.onAgainLoginListener != null) {
-                    HttpV2ResponseListener.onAgainLoginListener.onOutLogin(bmodel)
-                }
-                bmodel.setErrorMessage("")
-                onFailedV2(what, bmodel)
-            } else if ("20010" == bmodel.getErrorCode()) {
-                if (HttpV2ResponseListener.onAgainLoginListener != null) {
-                    HttpV2ResponseListener.onAgainLoginListener.onOutLogin(bmodel)
-                }
-                bmodel.setErrorMessage("")
-                onFailedV2(what, bmodel)
-            } else if ("10010" == bmodel.getErrorCode()) {
-                if (HttpV2ResponseListener.onAgainLoginListener != null) {
-                    HttpV2ResponseListener.onAgainLoginListener.onOutLogin(bmodel)
-                }
-                bmodel.setErrorMessage("")
-                onFailedV2(what, bmodel)
-            } else if ("5000" == bmodel.getErrorCode()) {
-                if (HttpV2ResponseListener.onAgainLoginListener != null) {
-                    HttpV2ResponseListener.onAgainLoginListener.onOutLogin(bmodel)
-                }
-                bmodel.setErrorMessage("")
-                onFailedV2(what, bmodel)
-            } else if ("20018" == bmodel.getErrorCode()) {
-                onFailedV2(what, bmodel)
-            } else {
-                if (what != HttpTaskID.LOGIN) {
-                    showToastBig(bmodel.getErrorMessage())
-                }
-                onFailedV2(what, bmodel)
-            }
 
-        } catch (e: Exception) {
-            L.e("异常：" + e.message)
-            if (TextUtils.isEmpty(e.message)) {
-                val baseModel = BaseModel()
-                baseModel.setErrorCode("699")
-                baseModel.setErrorMessage("异常信息为空！")
-                showToastBig(baseModel.getErrorMessage())
-                onFailedV2(what, baseModel)
-            } else if (e.message == "You cannot start a load for a destroyed activity") {
-
-            } else {
-                val baseModel = BaseModel()
-                baseModel.setErrorCode("698")
-                baseModel.setErrorMessage("数据解析异常！")
-                showToastBig(baseModel.getErrorMessage())
-                onFailedV2(what, baseModel)
-            }
-        }
 
     }
 }

@@ -138,48 +138,23 @@
 
 
     <!--自定义MLImageView的属性-->
-    <declare-styleable name="MLImageView">
-        <attr name="press_alpha" format="integer" />
-        <attr name="press_color" format="color" />
-        <attr name="radius" format="dimension" />
-        <attr name="border_width" format="dimension" />
-        <attr name="border_color" format="color" />
-        <attr name="shape_type" format="enum">
-            <enum name="round" value="0" />
-            <enum name="rectangle" value="1" />
-        </attr>
-    </declare-styleable>
     <declare-styleable name="MLImageViewR">
         <attr name="radius_top_left" format="dimension" />
         <attr name="radius_btm_left" format="dimension" />
         <attr name="radius_top_right" format="dimension" />
         <attr name="radius_btm_right" format="dimension" />
+
+        <attr name="is_circle" format="boolean" />
+        <attr name="is_cover_src" format="boolean" />
+        <attr name="corner_radius" format="dimension" />
+        <attr name="border_width" format="dimension" />
+        <attr name="border_color" format="color" />
+        <attr name="inner_border_width" format="dimension" />
+        <attr name="inner_border_color" format="color" />
+        <attr name="mask_color" format="color" />
+
     </declare-styleable>
-    <attr name="picture.title.textColor" format="reference|color" />
-    <attr name="picture.right.textColor" format="reference|color" />
-    <attr name="picture.leftBack.icon" format="reference" />
-    <attr name="picture.arrow_down.icon" format="reference" />
-    <attr name="picture.arrow_up.icon" format="reference" />
-    <attr name="picture.num.style" format="reference" />
-    <attr name="picture.checked.style" format="reference" />
-    <attr name="picture.bottom.bg" format="reference|color" />
-    <attr name="picture.preview.textColor" format="reference|color" />
-    <attr name="picture.complete.textColor" format="reference|color" />
-    <attr name="picture.ac_preview.title.textColor" format="reference|color" />
-    <attr name="picture.ac_preview.complete.textColor" format="reference|color" />
-    <attr name="picture.ac_preview.title.bg" format="reference|color" />
-    <attr name="picture.ac_preview.bottom.bg" format="reference|color" />
-    <attr name="picture.status.color" format="reference|color" />
-    <attr name="picture.preview.leftBack.icon" format="reference" />
-    <attr name="picture.statusFontColor" format="boolean" />
-    <attr name="picture.preview.statusFontColor" format="boolean" />
-    <attr name="picture.style.numComplete" format="boolean" />
-    <attr name="picture.style.checkNumMode" format="boolean" />
-    <attr name="picture.crop.toolbar.bg" format="reference|color" />
-    <attr name="picture.crop.status.color" format="reference|color" />
-    <attr name="picture.crop.title.color" format="reference|color" />
-    <attr name="picture.folder_checked_dot" format="reference" />
-    <attr name="picture.checked.style_preview" format="reference" />
+
 
     <declare-styleable name="Banner">
         <attr name="delay_time" format="integer" />
@@ -194,10 +169,10 @@
         <attr name="indicator_margin" format="dimension" />
         <attr name="indicator_drawable_selected" format="reference" />
         <attr name="indicator_drawable_unselected" format="reference" />
-        <attr name="banner_layout" format="reference"/>
-        <attr name="banner_default_image" format="reference"/>
-        <attr name="banner_raius" format="integer"/>
-        <attr name="banner_raius_enable" format="boolean"/>
+        <attr name="banner_layout" format="reference" />
+        <attr name="banner_default_image" format="reference" />
+        <attr name="banner_raius" format="integer" />
+        <attr name="banner_raius_enable" format="boolean" />
         <attr name="image_scale_type" format="enum">
             <enum name="center" value="0" />
             <enum name="center_crop" value="1" />
@@ -212,6 +187,60 @@
         <!--<attr name="indicator_animator_reverse" format="reference" />-->
     </declare-styleable>
 
+    <!--title 标题-->
+    <declare-styleable name="TitleToolbar">
+        <!--主标题是否显示-->
+        <attr name="titleVisible" format="boolean" />
+        <!--主标题的字体大小-->
+        <attr name="titleTextSize" format="dimension" />
+
+        <!--子标题是否显示-->
+        <attr name="subtitleVisible" format="boolean" />
+        <!--子标题的字体大小-->
+        <attr name="subtitleTextSize" format="dimension" />
+        <!--设置标题显示的位置-->
+        <attr name="title_gravity">
+            <flag name="top" value="0x30" />
+            <flag name="bottom" value="0x50" />
+            <flag name="left" value="0x03" />
+            <flag name="right" value="0x05" />
+            <flag name="center_vertical" value="0x10" />
+            <flag name="fill_vertical" value="0x70" />
+            <flag name="center_horizontal" value="0x01" />
+            <flag name="fill_horizontal" value="0x07" />
+            <flag name="center" value="0x11" />
+            <flag name="fill" value="0x77" />
+            <flag name="clip_vertical" value="0x80" />
+            <flag name="clip_horizontal" value="0x08" />
+            <flag name="start" value="0x00800003" />
+            <flag name="end" value="0x00800005" />
+        </attr>
+
+        <!--设置关闭按钮是否显示-->
+        <attr name="closeVisible" format="boolean" />
+        <!--设置关闭按钮内容-->
+        <attr name="closeText" format="string" />
+        <!--设置关闭内容的stype-->
+        <attr name="closeTextAppearance" format="reference" />
+        <!--设置关闭的字体颜色-->
+        <attr name="closeTextColor" format="color" />
+        <!--设置字体的大小-->
+        <attr name="closeTextSize" format="dimension" />
+        <!--设置返回是否显示-->
+        <attr name="backVisible" format="boolean" />
+        <!--设置返回按钮内容-->
+        <attr name="backText" format="string" />
+        <!--设置返回按钮的Style-->
+        <attr name="backTextAppearance" format="reference" />
+        <!--设置返回按钮文本颜色-->
+        <attr name="backTextColor" format="color" />
+        <!--设置返回按钮的文字大小-->
+        <attr name="backTextSize" format="dimension" />
+        <!--设置返回按钮的图标-->
+        <attr name="backIcon" format="reference" />
+        <!--设置返回按钮右边距-->
+        <attr name="backMarginRight" format="dimension" />
+    </declare-styleable>
 
 
 </resources>

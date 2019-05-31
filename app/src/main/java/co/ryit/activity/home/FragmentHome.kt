@@ -1,10 +1,14 @@
 package co.ryit.activity.home
 
 import android.content.Intent
+import android.os.Process
 import android.view.LayoutInflater
 import android.view.View
 import co.ryit.R
 import co.ryit.activity.download.DownloadActivity
+import co.ryit.activity.statusbar.StatusBarWriteActivity
+import co.ryit.activity.webview.MyWebViewActivity
+
 import co.ryit.base.BaseFragment
 import kotlinx.android.synthetic.main.fragnemtt_home.view.*
 
@@ -19,6 +23,10 @@ class FragmentHome : BaseFragment() {
          */
         inflate.download.setOnClickListener { activity!!.startActivity(Intent(activity, DownloadActivity::class.java)) }
 
+        inflate.clearedit.setInputIconVisibility(View.GONE)
+
+        inflate.notify.setOnClickListener { activity!!.startActivity(Intent(activity, StatusBarWriteActivity::class.java)) }
+        inflate.webviews.setOnClickListener { activity!!.startActivity(Intent(activity, MyWebViewActivity::class.java)) }
         return inflate;
     }
 }

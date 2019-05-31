@@ -1,7 +1,13 @@
 package co.baselib.global;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
+import android.view.View;
+import android.widget.TextView;
 
+import java.io.InputStream;
+
+import co.baselib.R;
 import co.baselib.bean.IloomoSDKModel;
 import co.baselib.bean.ResInit;
 
@@ -12,7 +18,7 @@ import co.baselib.bean.ResInit;
 public class IloomoConfig {
     public static IloomoConfig iloomoConfig;
 
-    public static IloomoConfig init(Context context) {
+    public synchronized static IloomoConfig init(Context context) {
         if (iloomoConfig == null) {
             iloomoConfig = new IloomoConfig(context);
         }
@@ -34,8 +40,9 @@ public class IloomoConfig {
      *
      * @param style
      */
-    public void setStyle(int style) {
+    public IloomoConfig setStyle(int style) {
         this.style = style;
+        return this;
     }
 
     /***
@@ -49,8 +56,9 @@ public class IloomoConfig {
     /***
      *设置是否在activity中显示,自定义toast,或者是系统的toast
      */
-    public void setActivityToast(boolean isToastActivity) {
+    public IloomoConfig setActivityToast(boolean isToastActivity) {
         this.isToastActivity = isToastActivity;
+        return this;
     }
 
     /***
@@ -61,120 +69,281 @@ public class IloomoConfig {
         return isToastActivity;
     }
 
-//
-//    /**
-//     * 跳转到播放本地视频的页面
-//     *
-//     * @param activity
-//     * @param path     路径
-//     */
-//    public void showPlayVideo(Activity activity, String path) {
-//        Intent intent = new Intent(activity, PictureVideoPlayActivity.class);
-//        intent.putExtra("video_path", path);
-//        activity.startActivity(intent);
-//    }
-//
-//    /**
-//     * 跳转到播放本地视频的页面
-//     *
-//     * @param context
-//     * @param path    路径
-//     */
-//    public void showPlayVideo(Context context, String path) {
-//        Intent intent = new Intent(context, PictureVideoPlayActivity.class);
-//        intent.putExtra("video_path", path);
-//        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-//        context.startActivity(intent);
-//    }
-//
-//    public static final int SHOW_PREVIEW_PLAY_VIEW = 3000;
-//    public static final int SHOW_PREVIEW_PLAY_VIEW_RESULTCODE = 3001;
-//    public final static String VIDEO_PATH = "video_path";
-//
-//    /***
-//     * 跳转到预览本地视频的页面
-//     * @param activity
-//     * @param path  路径
-//     */
-//    public void showPreViewPlayView(Activity activity, String path) {
-//        Intent intent = new Intent(activity, PictureVideoPlayPreviewActivity.class);
-//        intent.putExtra("video_path", path);
-//        activity.startActivityForResult(intent, SHOW_PREVIEW_PLAY_VIEW);
-//    }
-//
-//    /***
-//     * 预览图片
-//     * @param position 从第几个开始显示
-//     * @param listimages 数据
-//     */
-//    public void showImagePreView(int position, List<String> listimages) {
-//        Intent intent = new Intent(context, ShowImageActivity.class);
-//        List<String> showlist = new ArrayList<String>();
-//        showlist.addAll(listimages);
-//        showlist.remove(showlist.size() - 1);
-//        intent.putStringArrayListExtra("photos", (ArrayList<String>) showlist);
-//        intent.putExtra("index", position);
-//        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//        context.startActivity(intent);
-//    }
-//
-//    /***
-//     * 预览图片
-//     * @param position 从第几个开始显示
-//     * @param listimages 数据
-//     */
-//    public void showImagePreViewforResult(Activity activity, int position, List<String> listimages, int requestCode) {
-//        Intent intent = new Intent(context, ShowImageActivity.class);
-//        intent.putStringArrayListExtra("photos", (ArrayList<String>) listimages);
-//        intent.putExtra("index", position);
-//        intent.putExtra("isOver", true);
-//        activity.startActivityForResult(intent, requestCode);
-//    }
-//
-//    /***
-//     * 预览图片
-//     * @param position 从第几个开始显示
-//     * @param listimages 数据
-//     */
-//    public void showImagePreViewDeleteforResult(Activity activity, int position, List<String> listimages) {
-//        Intent intent = new Intent(context, ShowImageActivity.class);
-//        intent.putStringArrayListExtra("photos", (ArrayList<String>) listimages);
-//        intent.putExtra("index", position);
-//        intent.putExtra("isdelete", true);
-//        activity.startActivity(intent);
-//    }
-//
-//
-//    /****
-//     * 编辑视频
-//     * @param activity
-//     * @param path 路径
-//     */
-//    public void editVideo(Activity activity, String path) {
-//        Intent intent = new Intent(activity, VideoEditActivity.class);
-//        intent.putExtra("url", path);
-//        activity.startActivity(intent);
-//    }
-//
-//
-//    /***
-//     * 下载方法
-//     * @param downloadurl
-//     * @param path
-//     * @param httpDownloadListener
-//     */
-//    public void downLoadFile(String downloadurl, String path, Callback.ProgressCallback<File> httpDownloadListener) {
-//        xTools.DownLoadFile(downloadurl, path, httpDownloadListener);
-//    }
 
-
-    private ResInit resInit;
+    private ResInit resInit = new ResInit();
 
     public ResInit getResInit() {
         return resInit;
     }
 
-    public void setResInit(ResInit resInit) {
+    public IloomoConfig setResInit(ResInit resInit) {
         this.resInit = resInit;
+        return this;
     }
+
+
+    private boolean showCoutom = false;
+
+    private View coutomToastView;
+    private TextView showText;
+
+    /***
+     * 设置自定义view
+     * @param coutomToastView
+     */
+    public IloomoConfig setCoutomToast(View coutomToastView, TextView showText) {
+        this.coutomToastView = coutomToastView;
+        this.showText = showText;
+        return this;
+    }
+
+    /***
+     * 获取自定义toast中的view
+     * @return
+     */
+    public View getCoutomToast() {
+        return coutomToastView;
+    }
+
+    /***
+     * 获取自定义view中的TextView
+     * @return
+     */
+    public TextView getCoutomToastTextView() {
+        return showText;
+    }
+
+    /**
+     * 设置是否显示自定义toast
+     *
+     * @param showCoutom
+     */
+    public IloomoConfig setShowCoutomToast(boolean showCoutom) {
+        this.showCoutom = showCoutom;
+        return this;
+    }
+
+    /***
+     * 获取是否是自定义toast
+     * @return
+     */
+    public boolean isShowCoutomToast() {
+        return showCoutom;
+    }
+
+
+    private Drawable blank;
+    private Drawable show;
+    private Drawable clear;
+    private boolean isCoutomClear = false;
+
+    /***
+     * 设置clearedit中的按钮
+     * @param blank
+     * @param show
+     * @param clear
+     */
+    public IloomoConfig setClearEditIcon(boolean isCoutom, Drawable blank, Drawable show, Drawable clear) {
+        this.isCoutomClear = isCoutom;
+        this.blank = blank;
+        this.show = show;
+        this.clear = clear;
+        return this;
+    }
+
+    public boolean getCoutomClear() {
+        return isCoutomClear;
+    }
+
+    public Drawable getBlank() {
+        return blank;
+    }
+
+    public Drawable getShow() {
+        return show;
+    }
+
+    public Drawable getClear() {
+        return clear;
+    }
+
+
+    private int barColor = R.color.white;
+
+    /***
+     *
+     * 设置默认titlebar 颜色
+     */
+    public IloomoConfig setTitleBarColor(int barColor) {
+        this.barColor = barColor;
+        return this;
+    }
+
+    public int getTitleBarColor() {
+        return barColor;
+    }
+
+    private int blackImg = R.drawable.pc_back;
+
+    /***
+     * 设置统一返回图片
+     * @param blackImg
+     */
+    public IloomoConfig setBlackImg(int blackImg) {
+        this.blackImg = blackImg;
+        return this;
+    }
+
+    public int getBlackImg() {
+        return blackImg;
+    }
+
+    private int centertextsize = 18;
+
+    /***
+     * 设置标题中间的字体大小
+     * @param textsize dp
+     */
+    public IloomoConfig setCenterTextSize(int textsize) {
+        this.centertextsize = centertextsize;
+        return this;
+    }
+
+    public int getCenterTextSize() {
+        return centertextsize;
+    }
+
+    private int lc_right_menu = 15;
+
+    /***
+     *
+     * 设置左边的第一个title
+     * @param size dp
+     */
+    public IloomoConfig setRightMenuTextSize(int size) {
+        this.lc_right_menu = size;
+        return this;
+    }
+
+    public int getRightMenuTextSize() {
+        return lc_right_menu;
+    }
+
+    private int lc_right_second_menu = 15;
+
+    /***
+     * 设置左边第二个title
+     * @param secondMenu
+     */
+    public IloomoConfig setRightMenuSecondMenuTextSize(int secondMenu) {
+        this.lc_right_second_menu = secondMenu;
+        return this;
+    }
+
+
+    public int getRightMenuSecondMenuTextSize() {
+        return lc_right_second_menu;
+    }
+
+    private int defaultTitleBarHeight = 45; /***状态栏的默认高度***/
+
+
+    /***
+     * 设置状态栏的默认高度
+     * @param titleBarHeight
+     */
+    public IloomoConfig setTitleBarHeight(int titleBarHeight) {
+        defaultTitleBarHeight = titleBarHeight;
+        return this;
+    }
+
+    /***
+     * 获取状态栏的高度
+     * @return
+     */
+    public int getTitleBarHeight() {
+        return defaultTitleBarHeight;
+    }
+
+
+    private String dbName = "baselib";
+    private int db_version = 1;
+
+    /****
+     *
+     * 数据库名称
+     */
+    public void setDbName(String dbName) {
+        this.dbName = dbName;
+    }
+
+    /***
+     * 获取数据库名称
+     * @return
+     */
+    public String getDbName() {
+        return dbName;
+    }
+
+
+    /***
+     * 设置数据版本号
+     * @param version
+     */
+    public void setDbVersion(int version) {
+        this.db_version = version;
+    }
+
+    /****
+     * 获取数据库版本号
+     * @return
+     */
+    public int getDbVersion() {
+        return this.db_version;
+    }
+
+    /***
+     * 设置是否是调试
+     */
+    private boolean IsDebug = true;
+
+    public boolean isDebug() {
+        return IsDebug;
+    }
+
+    public void setDebug(boolean debug) {
+        IsDebug = debug;
+    }
+
+
+    /***
+     * 判断是否使用证书
+     */
+    private boolean isCertificate = false;
+
+    public boolean isCertificate() {
+        return isCertificate;
+    }
+
+    public void setCertificate(boolean certificate) {
+        isCertificate = certificate;
+    }
+
+    /****
+     * 在assets目录下 证书的文件名称 默认为空 为空 则 isCertificate不起作用
+     */
+    private InputStream inputStream = null;
+
+    /***
+     * 证书名称
+     * @return
+     */
+    public InputStream getInputStream() {
+        return inputStream;
+    }
+
+    public void setInputStream(InputStream inputStream) {
+        this.inputStream = inputStream;
+    }
+
 }

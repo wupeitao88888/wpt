@@ -1,93 +1,245 @@
 package co.baselib.widget;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PaintFlagsDrawFilter;
 import android.graphics.Path;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
 import android.graphics.RectF;
+import android.graphics.Xfermode;
+import android.support.annotation.ColorInt;
+import android.support.annotation.Nullable;
+import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
-import android.widget.ImageView;
-import co.baselib.R;
+import android.view.View;
 
-/**
- * Created by wupeitao on 2018/1/9.
- */
+import co.baselib.R;
+import co.baselib.global.AppController;
+import co.baselib.utils.ToastUtil;
+
 
 /***
- * 设置单个角圆角
+ *
+ * 如果不生效 需要在AndroidManifest.xml把        android:hardwareAccelerated="false"去掉
+ * imageview 圆角
  */
-@SuppressLint("AppCompatCustomView")
-public class MLImageViewR extends ImageView {
+public class MLImageViewR extends AppCompatImageView {
 
-    /*圆角的半径，依次为左上角xy半径，右上角，右下角，左下角*/
-    private float[] rids = {0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f};
+    private Context context;
+
+    private int cornerRadius; // 统一设置圆角半径，优先级高于单独设置每个角的半径
+    private int cornerTopLeftRadius; // 左上角圆角半径
+    private int cornerTopRightRadius; // 右上角圆角半径
+    private int cornerBottomLeftRadius; // 左下角圆角半径
+    private int cornerBottomRightRadius; // 右下角圆角半径
+
 
     public MLImageViewR(Context context) {
-        super(context);
+        this(context, null);
     }
 
-    public MLImageViewR(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        if (attrs != null) {
-            TypedArray array = context.obtainStyledAttributes(attrs, R.styleable.MLImageViewR);
-            radius_btm_left = array.getDimensionPixelSize(R.styleable.MLImageViewR_radius_btm_left, radius_btm_left);
-            radius_btm_right = array.getDimensionPixelSize(R.styleable.MLImageViewR_radius_btm_right, radius_btm_right);
-            radius_top_left = array.getDimensionPixelSize(R.styleable.MLImageViewR_radius_top_left, radius_top_left);
-            radius_top_right = array.getDimensionPixelSize(R.styleable.MLImageViewR_radius_top_right, radius_top_right);
-            /*圆角的半径，依次为左上角xy半径，右上角，右下角，左下角*/
-            rids[0] = radius_top_left;
-            rids[1] = radius_top_left;
-            rids[2] = radius_top_right;
-            rids[3] = radius_top_right;
-            rids[4] = radius_btm_right;
-            rids[5] = radius_btm_right;
-            rids[6] = radius_btm_left;
-            rids[7] = radius_btm_left;
-            array.recycle();
-        }
+    public MLImageViewR(Context context, @Nullable AttributeSet attrs) {
+        this(context, attrs, 0);
     }
 
-    int radius_btm_left;
-    int radius_btm_right;
-    int radius_top_left;
-    int radius_top_right;
 
-    public MLImageViewR(Context context, AttributeSet attrs, int defStyleAttr) {
+    /**
+     * 利用clip剪切的四个角半径，八个数据分别代表左上角（x轴半径，y轴半径），右上角（**），右下角（**），左下角（**）
+     */
+    private float[] rids = new float[8];
+
+    private Path mPath;
+    private RectF mRectF;
+    private PaintFlagsDrawFilter paintFlagsDrawFilter;
+
+    private boolean isCircle = false;
+
+    public MLImageViewR(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        if (attrs != null) {
-            TypedArray array = context.obtainStyledAttributes(attrs, R.styleable.MLImageViewR);
-            radius_btm_left = array.getDimensionPixelSize(R.styleable.MLImageViewR_radius_btm_left, radius_btm_left);
-            radius_btm_right = array.getDimensionPixelSize(R.styleable.MLImageViewR_radius_btm_right, radius_btm_right);
-            radius_top_left = array.getDimensionPixelSize(R.styleable.MLImageViewR_radius_top_left, radius_top_left);
-            radius_top_right = array.getDimensionPixelSize(R.styleable.MLImageViewR_radius_top_right, radius_top_right);
-            /*圆角的半径，依次为左上角xy半径，右上角，右下角，左下角*/
-            rids[0] = radius_top_left;
-            rids[1] = radius_top_left;
-            rids[2] = radius_top_right;
-            rids[3] = radius_top_right;
-            rids[4] = radius_btm_right;
-            rids[5] = radius_btm_right;
-            rids[6] = radius_btm_left;
-            rids[7] = radius_btm_left;
-            array.recycle();
+
+        this.context = context;
+
+        TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.MLImageViewR, 0, 0);
+        for (int i = 0; i < ta.getIndexCount(); i++) {
+            int attr = ta.getIndex(i);
+            if (attr == R.styleable.MLImageViewR_is_circle) {
+                isCircle = ta.getBoolean(attr, isCircle);
+            } else if (attr == R.styleable.MLImageViewR_corner_radius) {
+                cornerRadius = ta.getDimensionPixelSize(attr, cornerRadius);
+            } else if (attr == R.styleable.MLImageViewR_radius_top_left) {
+                cornerTopLeftRadius = ta.getDimensionPixelSize(attr, cornerTopLeftRadius);
+            } else if (attr == R.styleable.MLImageViewR_radius_top_right) {
+                cornerTopRightRadius = ta.getDimensionPixelSize(attr, cornerTopRightRadius);
+            } else if (attr == R.styleable.MLImageViewR_radius_btm_left) {
+                cornerBottomLeftRadius = ta.getDimensionPixelSize(attr, cornerBottomLeftRadius);
+            } else if (attr == R.styleable.MLImageViewR_radius_btm_right) {
+                cornerBottomRightRadius = ta.getDimensionPixelSize(attr, cornerBottomRightRadius);
+            }
         }
+        ta.recycle();
+        /***
+         * 判断是否是圆角
+         */
+        if (isCircle) {
+            rids[0] = 100;
+            rids[1] = 100;
+            rids[2] = 100;
+            rids[3] = 100;
+            rids[4] = 100;
+            rids[5] = 100;
+            rids[6] = 100;
+            rids[7] = 100;
+        } else if (cornerRadius>0) {
+            rids[0] = cornerRadius;
+            rids[1] = cornerRadius;
+            rids[2] = cornerRadius;
+            rids[3] = cornerRadius;
+            rids[4] = cornerRadius;
+            rids[5] = cornerRadius;
+            rids[6] = cornerRadius;
+            rids[7] = cornerRadius;
+        } else {
+            rids[0] = cornerTopLeftRadius;
+            rids[1] = cornerTopLeftRadius;
+            rids[2] = cornerTopRightRadius;
+            rids[3] = cornerTopRightRadius;
+            rids[4] = cornerBottomRightRadius;
+            rids[5] = cornerBottomRightRadius;
+            rids[6] = cornerBottomLeftRadius;
+            rids[7] = cornerBottomLeftRadius;
+        }
+
+
+        mPath = new Path();
+        paintFlagsDrawFilter = new PaintFlagsDrawFilter(0, Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG);
+        setLayerType(View.LAYER_TYPE_HARDWARE, null);
+
     }
+
 
     @Override
     protected void onDraw(Canvas canvas) {
-        Path path = new Path();
-        int w = this.getWidth();
-        int h = this.getHeight();
-        /*向路径中添加圆角矩形。radii数组定义圆角矩形的四个圆角的x,y半径。radii长度必须为8*/
-        path.addRoundRect(new RectF(0, 0, w, h), rids, Path.Direction.CW);
-        canvas.clipPath(path);
-        /**
-         * 去除锯齿
-         */
-        canvas.setDrawFilter(new PaintFlagsDrawFilter(0, Paint.FILTER_BITMAP_FLAG | Paint.ANTI_ALIAS_FLAG));
+        mPath.reset();
+        mPath.addRoundRect(mRectF, rids, Path.Direction.CW);
+        canvas.setDrawFilter(paintFlagsDrawFilter);
+        canvas.save();
+        canvas.clipPath(mPath);
         super.onDraw(canvas);
+        canvas.restore();
     }
+
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        super.onSizeChanged(w, h, oldw, oldh);
+        mRectF = new RectF(0, 0, w, h);
+    }
+
+
+    /***
+     * 是否显示为圆形（默认为矩形）
+     * @param isCircle
+     */
+    public void isCircle(boolean isCircle) {
+        this.isCircle = isCircle;
+        rids[0] = 100;
+        rids[1] = 100;
+        rids[2] = 100;
+        rids[3] = 100;
+        rids[4] = 100;
+        rids[5] = 100;
+        rids[6] = 100;
+        rids[7] = 100;
+        invalidate();
+    }
+
+
+    /***
+     * 统一设置四个角的圆角半径
+     * @param cornerRadius
+     */
+    public void setCornerRadius(int cornerRadius) {
+        this.cornerRadius = AppController.getInstance().dp2px(cornerRadius);
+        rids[0] = cornerRadius;
+        rids[1] = cornerRadius;
+        rids[2] = cornerRadius;
+        rids[3] = cornerRadius;
+        rids[4] = cornerRadius;
+        rids[5] = cornerRadius;
+        rids[6] = cornerRadius;
+        rids[7] = cornerRadius;
+        invalidate();
+    }
+
+    /***
+     * 左上角圆角半径
+     * @param cornerTopLeftRadius
+     */
+    public void setCornerTopLeftRadius(int cornerTopLeftRadius) {
+        this.cornerTopLeftRadius = AppController.getInstance().dp2px(cornerTopLeftRadius);
+        rids[0] = cornerTopLeftRadius;
+        rids[1] = cornerTopLeftRadius;
+        rids[2] = 0;
+        rids[3] = 0;
+        rids[4] = 0;
+        rids[5] = 0;
+        rids[6] = 0;
+        rids[7] = 0;
+        invalidate();
+    }
+
+    /***
+     * 右上角圆角半径
+     * @param cornerTopRightRadius
+     */
+    public void setCornerTopRightRadius(int cornerTopRightRadius) {
+        this.cornerTopRightRadius = AppController.getInstance().dp2px(cornerTopRightRadius);
+        rids[0] = 0;
+        rids[1] = 0;
+        rids[2] = cornerTopRightRadius;
+        rids[3] = cornerTopRightRadius;
+        rids[4] = 0;
+        rids[5] = 0;
+        rids[6] = 0;
+        rids[7] = 0;
+        invalidate();
+    }
+
+    /***
+     * 左下角圆角半径
+     * @param cornerBottomLeftRadius
+     */
+    public void setCornerBottomLeftRadius(int cornerBottomLeftRadius) {
+        this.cornerBottomLeftRadius = AppController.getInstance().dp2px(cornerBottomLeftRadius);
+        rids[0] = 0;
+        rids[1] = 0;
+        rids[2] = 0;
+        rids[3] = 0;
+        rids[4] = 0;
+        rids[5] = 0;
+        rids[6] = cornerBottomLeftRadius;
+        rids[7] = cornerBottomLeftRadius;
+        invalidate();
+    }
+
+    /***
+     * 右下角圆角半径
+     * @param cornerBottomRightRadius
+     */
+    public void setCornerBottomRightRadius(int cornerBottomRightRadius) {
+        this.cornerBottomRightRadius = AppController.getInstance().dp2px(cornerBottomRightRadius);
+        rids[0] = 0;
+        rids[1] = 0;
+        rids[2] = 0;
+        rids[3] = 0;
+        rids[4] = cornerBottomRightRadius;
+        rids[5] = cornerBottomRightRadius;
+        rids[6] = 0;
+        rids[7] = 0;
+        invalidate();
+    }
+
 }

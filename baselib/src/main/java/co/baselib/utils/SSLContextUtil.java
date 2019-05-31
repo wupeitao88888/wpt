@@ -26,7 +26,6 @@ import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
 
-import co.baselib.global.AppConfig;
 import co.baselib.global.AppController;
 
 /**
@@ -36,19 +35,19 @@ import co.baselib.global.AppController;
  */
 public class SSLContextUtil {
 
+    /****
+     *
+     *  设置assets里面证书的名字
+     *
+     * @param inputStream
+     * @return
+     */
     @SuppressLint("TrulyRandom")
-    public static SSLContext getSSLContext() {
+    public static SSLContext getSSLContext(InputStream inputStream) {
         SSLContext sslContext = null;
         try {
             sslContext = SSLContext.getInstance("TLS");
-            String name = "";
-            if (AppConfig.ISZENGSHI) {
-                name = "zengshi.cer";
-            } else {
-                name = "test.cer";
-            }
 
-            InputStream inputStream = AppController.getInstance().getContext().getAssets().open(name);//测试
             CertificateFactory cerFactory = CertificateFactory.getInstance("X.509");
             Certificate cer = cerFactory.generateCertificate(inputStream);
 

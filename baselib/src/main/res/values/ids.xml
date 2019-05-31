@@ -11,4 +11,6 @@
     <item name="indicatorInside" type="id"/>
     <item name="bannerDefaultImage" type="id"/>
     <item name="title_bar" type="id"/>
+    <item name="close" type="id" />
+    <item name="back" type="id" />
 </resources>

@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.Animator.AnimatorListener;
@@ -17,6 +18,7 @@ import co.baselib.R;
 import co.baselib.utils.PImageLoaderUtils;
 
 /***
+ *
  * 启动页
  *
  * @author wpt
@@ -39,20 +41,31 @@ public class StartPic extends FrameLayout {
         init(context);
     }
 
+    RelativeLayout StartPicView;
+
     private void init(Context context) {
         // TODO Auto-generated method stub
         this.context = context;
-        View StartPicView = LayoutInflater.from(context).inflate(
+        StartPicView = (RelativeLayout) LayoutInflater.from(context).inflate(
                 R.layout.startpic_layout, null);
         start_pic_image = (ImageView) StartPicView
                 .findViewById(R.id.start_pic_image);
 
         set = new AnimatorSet();
         set.playTogether(
-                ObjectAnimator.ofFloat(start_pic_image, "alpha", 0.5f, 1, 1)
+                ObjectAnimator.ofFloat(StartPicView, "alpha", 0.5f, 1, 1)
         );
 
         addView(StartPicView);
+    }
+
+    /**
+     * 添加自定义
+     * @param view
+     */
+    public void addCustomView(View view) {
+        StartPicView.removeAllViews();
+        StartPicView.addView(view);
     }
 
     /***
