@@ -2,13 +2,13 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 29
 
 
 
     defaultConfig {
         minSdkVersion 14
-        targetSdkVersion 28
+        targetSdkVersion 29
         versionCode 1
         versionName "1.0"
 
@@ -67,8 +67,6 @@ dependencies {
     api 'com.jakewharton.rxbinding:rxbinding:1.0.0'
     api "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     api 'org.greenrobot:eventbus:3.1.1'
-    //    implementation project(':base-adapter-library')
-    //    implementation project(':baseadapter-recyclerview')
     implementation files('libs/tbs_sdk_thirdapp_v3.6.0.1310_43612_sharewithdownload_withoutGame_obfs_20180706_163319.jar')
 }
 
@@ -79,7 +77,6 @@ apply plugin: 'maven'
 uploadArchives {
     repositories {
         mavenDeployer {
-//            repository(url: "http://58.87.124.224:8082/repository/baselib/") {
             repository(url: "http://localhost:8082/repository/baselib/") {
                 authentication(userName: "admin", password: "admin123")
             }
