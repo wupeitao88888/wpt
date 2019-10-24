@@ -6,9 +6,10 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application>
-        <activity android:name=".base.ActivitySupport" />
-        <service android:name=".service.PreLoadX5Service" />
+        <activity android:name=".base.ByActivitySupport" />
+        <service android:name=".service.ByPreLoadX5Service" />
     </application>
 </manifest>

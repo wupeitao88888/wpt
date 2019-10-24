@@ -1,13 +1,13 @@
 package co.ryit.activity.welcome
 
-import android.app.Activity
 import android.os.Bundle
 import co.ryit.R
+import co.ryit.base.WActivityBase
 
-
-class WelcomeActivity : Activity() {
+class WelcomeActivity : WActivityBase() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.layout_app)
+        setRemoveTitle()
     }
 }

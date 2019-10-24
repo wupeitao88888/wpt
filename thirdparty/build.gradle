@@ -12,7 +12,7 @@ android {
         versionCode 1
         versionName "1.0"
 
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
 
         ndk {
@@ -45,7 +45,7 @@ dependencies {
     api files('libs/umeng-sharetool-6.9.3.jar')
     api files('libs/utdid4all-1.1.5.3_proguard.jar')
     //noinspection GradleCompatible
-    implementation 'com.android.support:design:27.1.1'
+    implementation 'com.google.android.material:material:1.0.0'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
 
