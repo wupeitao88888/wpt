@@ -925,7 +925,7 @@ public class ByDateUtil {
      * 获取某月的第一天和最后一天
      *
      * @param strDate 指定日期
-     * @param 指定日期格式
+     * @param
      * @return
      * @throws ParseException
      */
@@ -982,6 +982,107 @@ public class ByDateUtil {
         return dates;
     }
 
+
+    /****
+     *
+     *
+     * 获取日期昨天一周的日期
+     *
+     * @return
+     */
+    public static List<String> getSevendateBase(Date date) {
+
+        List<String> strings = new ArrayList<>();
+        for (int i = 0; i < 7; i++) {
+            Calendar calendar = new GregorianCalendar();
+            calendar.setTime(date);
+            calendar.add(calendar.DATE, i - 1);//把日期往后增加一天.整数往后推,负数往前移动
+            Date mdates = calendar.getTime(); //这个时间就是日期往后推一天的结果
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+            String dateString = formatter.format(mdates);
+            strings.add(dateString);
+        }
+        return strings;
+    }
+
+    /***
+     *
+     * 判断日期是否是昨天
+     *
+     * @return
+     */
+    public static boolean isYesterday(Date date) {
+
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        String dateString = formatter.format(date);
+
+        Calendar calendarToday = new GregorianCalendar();
+        calendarToday.setTime(new Date());
+        calendarToday.add(calendarToday.DATE, -1);
+        Date dateToday = calendarToday.getTime(); //这个时间就是日期往后推一天的结果
+        SimpleDateFormat formatterToday = new SimpleDateFormat("yyyy-MM-dd");
+        String dateStringToday = formatterToday.format(dateToday);
+        ByL.e(dateStringToday + "_________isYesterday___________" + dateString);
+
+        if (dateStringToday.equals(dateString)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /****
+     *
+     *  判断是是今天
+     *
+     * @param date
+     * @return
+     */
+    public static boolean isToday(Date date) {
+
+
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        String dateString = formatter.format(date);
+
+        Calendar calendarToday = new GregorianCalendar();
+        calendarToday.setTime(new Date());
+        calendarToday.add(calendarToday.DATE, 0);
+        Date dateToday = calendarToday.getTime(); //这个时间就是日期往后推一天的结果
+        SimpleDateFormat formatterToday = new SimpleDateFormat("yyyy-MM-dd");
+        String dateStringToday = formatterToday.format(dateToday);
+        ByL.e(dateStringToday + "_________isToday___________" + dateString);
+        if (dateStringToday.equals(dateString)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /****
+     *
+     *
+     * 判断是否是明天
+     * @param date
+     * @return
+     */
+    public static boolean isTomorrow(Date date) {
+
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        String dateString = formatter.format(date);
+
+        Calendar calendarToday = new GregorianCalendar();
+        calendarToday.setTime(new Date());
+        calendarToday.add(calendarToday.DATE, 1);
+        Date dateToday = calendarToday.getTime(); //这个时间就是日期往后推一天的结果
+        SimpleDateFormat formatterToday = new SimpleDateFormat("yyyy-MM-dd");
+        String dateStringToday = formatterToday.format(dateToday);
+        ByL.e(dateStringToday + "_________isTomorrow___________" + dateString);
+        if (dateStringToday.equals(dateString)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     /***
      * 获取当前月份多少天
@@ -1108,7 +1209,7 @@ public class ByDateUtil {
     /**
      * 时间戳转换成日期格式字符串
      *
-     * @param seconds   精确到秒的字符串
+     * @param seconds 精确到秒的字符串
      * @param format
      * @return
      */
@@ -1126,8 +1227,8 @@ public class ByDateUtil {
     /**
      * 日期格式字符串转换成时间戳
      *
-     * @param date_str   字符串日期
-     * @param format 如：yyyy-MM-dd HH:mm:ss
+     * @param date_str 字符串日期
+     * @param format   如：yyyy-MM-dd HH:mm:ss
      * @return
      */
     public static String date2TimeStamp(String date_str, String format) {
@@ -1139,11 +1240,12 @@ public class ByDateUtil {
         }
         return "";
     }
+
     /**
      * 日期格式字符串转换成时间戳
      *
-     * @param date_str   字符串日期
-     * @param format 如：yyyy-MM-dd HH:mm:ss
+     * @param date_str 字符串日期
+     * @param format   如：yyyy-MM-dd HH:mm:ss
      * @return
      */
     public static long date2TimeStampLong(String date_str, String format) {

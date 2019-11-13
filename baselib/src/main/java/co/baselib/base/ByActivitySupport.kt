@@ -206,10 +206,12 @@ open class ByActivitySupport : AppCompatActivity() {
 
         titleBar = LayoutInflater.from(this).inflate(
                 R.layout.by_layout_activitytitle, null) as ByTitleBar
+
         layout_parent = LayoutInflater.from(context).inflate(
                 R.layout.by_layout_parent, null) as RelativeLayout
+
         childclick = layout_parent!!.findViewById<View>(R.id.childclick) as ByChildClickableRelativeLayout
-        //        // 自己的布局
+        // 自己的布局
         customtitle = LayoutInflater.from(this).inflate(layoutResID, null) as ViewGroup
         childclick!!.addView(customtitle)
         all_super!!.addView(titleBar, 0)

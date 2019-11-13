@@ -123,11 +123,11 @@ public class ByCrashHandler implements UncaughtExceptionHandler {
             } catch (InterruptedException e) {
                 Log.e(TAG, "error : ", e);
             }
-            if (current_exception_num < 3) {
+//            if (current_exception_num < 3) {
+//
+//            }
 
-            }
-
-            restartApp();
+//            restartApp();
             // 发送异常日志邮件
         }
     }

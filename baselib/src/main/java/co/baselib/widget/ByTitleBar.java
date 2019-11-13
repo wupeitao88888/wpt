@@ -114,7 +114,7 @@ public class ByTitleBar extends ByBaseToolBar {
 //        ViewGroup.MarginLayoutParams  m= (ViewGroup.MarginLayoutParams)layoutParams;
 //        m.leftMargin
 
-        lc_left_back.setLayoutParams(layoutParams);
+//        lc_left_back.setLayoutParams(layoutParams);
 
 
 
